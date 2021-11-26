@@ -1,6 +1,7 @@
 package com.tcdt.qlnvkho.controller;
 
 import java.lang.reflect.Field;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -24,7 +25,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tcdt.qlnvkho.jwt.TokenAuthenticationService;
-
 
 public class BaseController {
 
@@ -162,5 +162,13 @@ public class BaseController {
 			}
 		}
 		return false;
+	}
+
+	public static Date getDateTimeNow() throws Exception {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = new Date();
+		String local = df.format(date);
+		Date datenow = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(local);
+		return datenow;
 	}
 }

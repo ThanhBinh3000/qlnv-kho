@@ -3,6 +3,7 @@ package com.tcdt.qlnvkho.controller;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tcdt.qlnvkho.enums.EnumResponse;
 import com.tcdt.qlnvkho.jwt.TokenAuthenticationService;
 import com.tcdt.qlnvkho.repository.QlnvDmDiemKhoRepository;
 import com.tcdt.qlnvkho.repository.QlnvKhoTangRepository;
@@ -45,6 +47,7 @@ import com.tcdt.qlnvkho.table.QlnvKhoThuKho;
 import com.tcdt.qlnvkho.table.catalog.QlnvDmThukho;
 import com.tcdt.qlnvkho.util.Contains;
 import com.tcdt.qlnvkho.util.PaginationSet;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -75,18 +78,18 @@ public class QlnvKhoTangController extends BaseController {
 		try {
 			QlnvKhoTang dataMap = new ModelMapper().map(objReq, QlnvKhoTang.class);
 			QlnvKhoTang qOptional = qlnvKhoTangRepository.findByMaKho(objReq.getMaKho());
-			if (qOptional!=null)
+			if (qOptional != null)
 				throw new UnsupportedOperationException("Đã tồn tại Kho với mã " + objReq.getMaKho());
 			Authentication authentication = TokenAuthenticationService.getAuthentication(request);
 			dataMap.setNgayTao(cal.getTime());
 			dataMap.setTrangThai(Contains.TAO_MOI);
 			dataMap.setNguoiTao(authentication.getName());
 			qlnvKhoTangRepository.save(dataMap);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -102,8 +105,8 @@ public class QlnvKhoTangController extends BaseController {
 		try {
 			QlnvKhoTang dataMap = new ModelMapper().map(objReq, QlnvKhoTang.class);
 			QlnvKhoTang checkExist = qlnvKhoTangRepository.findByMaKho(objReq.getMaKho());
-			if (checkExist!=null)
-				throw new UnsupportedOperationException("Đã tồn tại Kho với mã " + objReq.getMaKho());			
+			if (checkExist != null)
+				throw new UnsupportedOperationException("Đã tồn tại Kho với mã " + objReq.getMaKho());
 			QlnvKhoTang qOptional = qlnvKhoTangRepository.findByMaKho(objReq.getMaKhoCu());
 			if (qOptional == null)
 				throw new UnsupportedOperationException("Không tồn tại Kho với mã " + objReq.getMaKhoCu());
@@ -115,11 +118,11 @@ public class QlnvKhoTangController extends BaseController {
 			dataMap.setTrangThai(Contains.TAO_MOI);
 			dataMap.setNguoiTao(authentication.getName());
 			qlnvKhoTangRepository.save(dataMap);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -139,6 +142,8 @@ public class QlnvKhoTangController extends BaseController {
 			if (!QlnvKhoTang.isPresent())
 				throw new Exception("Không tìm thấy dữ liệu cần xoá");
 			qlnvKhoTangRepository.deleteById(qhoachId);
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
 			resp.setStatusCode(Contains.RESP_FAIL);
@@ -162,10 +167,11 @@ public class QlnvKhoTangController extends BaseController {
 			Page<QlnvKhoTang> qhKho = qlnvKhoTangRepository.selectParams(simpleSearchReq.getMaKho(),
 					simpleSearchReq.getTrangThai(), pageable);
 
-			resp.setStatusCode(Contains.RESP_SUCC);
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 			resp.setData(qhKho);
 		} catch (Exception e) {
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -197,11 +203,11 @@ public class QlnvKhoTangController extends BaseController {
 			dataDTB.setNgaySua(cal.getTime());
 			dataDTB.setNguoiSua(authentication.getName());
 			qlnvKhoTangRepository.save(dataDTB);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -221,10 +227,10 @@ public class QlnvKhoTangController extends BaseController {
 			if (!qOptional.isPresent())
 				throw new UnsupportedOperationException("Không tồn tại bản ghi");
 			resp.setData(qOptional);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -262,12 +268,13 @@ public class QlnvKhoTangController extends BaseController {
 				break;
 			}
 			qlnvKhoTangRepository.save(qHoach.get());
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
+			log.error(e.getMessage());
 		}
 		return ResponseEntity.ok(resp);
 	}
@@ -287,12 +294,13 @@ public class QlnvKhoTangController extends BaseController {
 			khoDb.setTinhTrang(
 					khoDb.getTinhTrang().equals(Contains.HOAT_DONG) ? Contains.NGUNG_HOAT_DONG : Contains.HOAT_DONG);
 			qlnvKhoTangRepository.save(khoDb);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
+			log.error(e.getMessage());
 		}
 		return ResponseEntity.ok(resp);
 	}
@@ -309,10 +317,10 @@ public class QlnvKhoTangController extends BaseController {
 			if (qOptional == null)
 				throw new UnsupportedOperationException("Không tồn tại bản ghi");
 			resp.setData(qOptional);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -332,10 +340,10 @@ public class QlnvKhoTangController extends BaseController {
 			Page<QlnvDmThukho> data = qlnvDmThukhoRepository.selectParams(objReq.getMaThukho(), objReq.getTenThukho(),
 					objReq.getTrangThai(), pageable);
 			resp.setData(data);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -355,16 +363,16 @@ public class QlnvKhoTangController extends BaseController {
 			Page<QlnvKhoThuKho> data = qlnvKhoThuKhoRepository.selectParams(objReq.getMaKho(), objReq.getTrangThai(),
 					pageable);
 			resp.setData(data);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
 		return ResponseEntity.ok(resp);
 	}
-	
+
 	@ApiOperation(value = "Lấy thông tin thủ kho theo mã", response = List.class)
 	@PostMapping(value = "/find-ma-thu-kho", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
@@ -377,15 +385,16 @@ public class QlnvKhoTangController extends BaseController {
 			if (qOptional == null)
 				throw new UnsupportedOperationException("Không tồn tại bản ghi");
 			resp.setData(qOptional);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
 		return ResponseEntity.ok(resp);
 	}
+
 	@ApiOperation(value = "Giao kho cho thủ kho", response = List.class)
 	@PostMapping(value = "/giao-kho", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
@@ -397,17 +406,17 @@ public class QlnvKhoTangController extends BaseController {
 			QlnvKhoTang qOptional = qlnvKhoTangRepository.findByMaKho(objReq.getMaKho());
 			if (qOptional == null)
 				throw new UnsupportedOperationException("Không tồn tại Kho với mã " + objReq.getMaKho());
-			
+
 			Authentication authentication = TokenAuthenticationService.getAuthentication(request);
 			dataMap.setNgayTao(cal.getTime());
 			dataMap.setTrangThai(Contains.HOAT_DONG);
 			dataMap.setNguoiTao(authentication.getName());
 			qlnvKhoThuKhoRepository.save(dataMap);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}

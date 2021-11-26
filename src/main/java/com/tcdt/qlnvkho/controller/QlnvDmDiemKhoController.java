@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tcdt.qlnvkho.enums.EnumResponse;
 import com.tcdt.qlnvkho.jwt.TokenAuthenticationService;
 import com.tcdt.qlnvkho.repository.QlnvDmDiemKhoRepository;
 import com.tcdt.qlnvkho.request.IdSearchReq;
@@ -62,12 +63,12 @@ public class QlnvDmDiemKhoController extends BaseController {
 			dataMap.setTrangThai(Contains.TAO_MOI);
 			dataMap.setNguoiTao(getUserName(req));
 			qlnvDmDiemKhoRepository.save(dataMap);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			e.printStackTrace();
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -87,9 +88,11 @@ public class QlnvDmDiemKhoController extends BaseController {
 			if (!QlnvDmDiemKho.isPresent())
 				throw new Exception("Không tìm thấy dữ liệu cần xoá");
 			qlnvDmDiemKhoRepository.deleteById(qhoachId);
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -109,10 +112,11 @@ public class QlnvDmDiemKhoController extends BaseController {
 
 			Page<QlnvDmDiemKho> qhKho = qlnvDmDiemKhoRepository.selectParams(simpleSearchReq.getCode(), pageable);
 
-			resp.setStatusCode(Contains.RESP_SUCC);
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 			resp.setData(qhKho);
 		} catch (Exception e) {
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -138,11 +142,11 @@ public class QlnvDmDiemKhoController extends BaseController {
 			dataDTB.setNgaySua(cal.getTime());
 			dataDTB.setNguoiSua(authentication.getName());
 			qlnvDmDiemKhoRepository.save(dataDTB);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -162,10 +166,10 @@ public class QlnvDmDiemKhoController extends BaseController {
 			if (!qOptional.isPresent())
 				throw new UnsupportedOperationException("Không tồn tại bản ghi");
 			resp.setData(qOptional);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -203,12 +207,13 @@ public class QlnvDmDiemKhoController extends BaseController {
 				break;
 			}
 			qlnvDmDiemKhoRepository.save(qHoach.get());
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
+			log.error(e.getMessage());
 		}
 		return ResponseEntity.ok(resp);
 	}

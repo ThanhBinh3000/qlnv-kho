@@ -46,6 +46,7 @@ public class QlnvQdXdungKhoHdr implements Serializable {
 	String nguoiGuiDuyet;
 	Date ngayPduyet;
 	String nguoiPduyet;
+	String loaiKhoach;
 	//@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	@OneToMany(
 	        mappedBy = "header",

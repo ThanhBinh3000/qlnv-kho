@@ -3,9 +3,12 @@ package com.tcdt.qlnvkho.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.hibernate.Filter;
+import org.hibernate.Session;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,6 +50,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/business/qd-xdung-kho")
 @Api(tags = "Quyết định xây dựng kho tàng")
 public class QlnvQdXdungKhoHdrController extends BaseController {
+	@Autowired
+	private EntityManager entityManager;
+
 	@Autowired
 	private QlnvQdXdungKhoHdrRepository qlnvQdXdungKhoHdrRepository;
 
@@ -113,8 +119,15 @@ public class QlnvQdXdungKhoHdrController extends BaseController {
 			int limit = PaginationSet.getLimit(simpleSearchReq.getLimit());
 			Pageable pageable = PageRequest.of(page, limit, Sort.by("id").ascending());
 
+			Session session = entityManager.unwrap(Session.class);
+
+			Filter filter = session.enableFilter("pFilter");
+			filter.setParameter("maDvi", "HNO");
+
 			Page<QlnvQdXdungKhoHdr> qhKho = qlnvQdXdungKhoHdrRepository.selectParams(simpleSearchReq.getCode(),
 					pageable);
+			
+			session.disableFilter("pFilter");
 
 			resp.setData(qhKho);
 			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());

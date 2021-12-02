@@ -1,6 +1,7 @@
 package com.tcdt.qlnvkho.controller;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +18,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 
@@ -24,15 +28,28 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.tcdt.qlnvkho.enums.EnumResponse;
 import com.tcdt.qlnvkho.jwt.TokenAuthenticationService;
+import com.tcdt.qlnvkho.service.feign.CategoryServiceProxy;
+import com.tcdt.qlnvkho.table.catalog.QlnvDmDonvi;
+import com.tcdt.qlnvkho.util.Request;
 
 public class BaseController {
+
+	@Autowired
+	private CategoryServiceProxy categoryServiceProxy;
 
 	public String getStringParams(Map<String, String> allParams, String nameParam) {
 		if (StringUtils.isEmpty(allParams.get(nameParam))) {
 			return null;
 		}
 		return allParams.get(nameParam);
+	}
+
+	public String getAuthorizationToken(HttpServletRequest request) {
+		return (String) request.getHeader("Authorization");
 	}
 
 	public Long getLongParams(Map<String, String> allParams, String nameParam) {
@@ -59,6 +76,25 @@ public class BaseController {
 	public String getUserName(HttpServletRequest req) {
 		Authentication authentication = TokenAuthenticationService.getAuthentication(req);
 		return authentication.getName();
+	}
+
+	public QlnvDmDonvi getDvi(HttpServletRequest request) throws Exception {
+		// Call feign get dvql
+		ResponseEntity<String> response = categoryServiceProxy.getDetail(this.getAuthorizationToken(request),
+				this.getDvql(request));
+
+		if (Request.getStatus(response.getBody()) != EnumResponse.RESP_SUCC.getValue())
+			throw new Exception("Không tìm truy vấn được thông tin đơn vị");
+
+		// Passed ket qua tra ve, tuy bien type list or object
+		String str = Request.getAttrFromJson(response.getBody(), "data");
+		Type type = new TypeToken<QlnvDmDonvi>() {
+		}.getType();
+		QlnvDmDonvi objDonVi = new Gson().fromJson(str, type);
+
+		if (ObjectUtils.isEmpty(objDonVi))
+			throw new Exception("Không tìm truy vấn được thông tin đơn vị");
+		return objDonVi;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

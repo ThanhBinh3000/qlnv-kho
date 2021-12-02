@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tcdt.qlnvkho.enums.EnumResponse;
+import com.tcdt.qlnvkho.repository.QlnvQdXdungKhoHdr2Repository;
 import com.tcdt.qlnvkho.repository.QlnvQdXdungKhoHdrRepository;
 import com.tcdt.qlnvkho.request.IdSearchReq;
 import com.tcdt.qlnvkho.request.SimpleSearchReq;
@@ -37,6 +38,7 @@ import com.tcdt.qlnvkho.request.object.StatusReq;
 import com.tcdt.qlnvkho.response.Resp;
 import com.tcdt.qlnvkho.table.QlnvQdXdungKhoDtl;
 import com.tcdt.qlnvkho.table.QlnvQdXdungKhoHdr;
+import com.tcdt.qlnvkho.table.QlnvQdXdungKhoHdr2;
 import com.tcdt.qlnvkho.util.Contains;
 import com.tcdt.qlnvkho.util.PaginationSet;
 
@@ -55,6 +57,9 @@ public class QlnvQdXdungKhoHdrController extends BaseController {
 
 	@Autowired
 	private QlnvQdXdungKhoHdrRepository qlnvQdXdungKhoHdrRepository;
+
+	@Autowired
+	private QlnvQdXdungKhoHdr2Repository qlnvQdXdungKhoHdr2Repository;
 
 	@ApiOperation(value = "Tạo mới Quyết định xây dựng kho tàng", response = List.class)
 	@PostMapping(value = "/them-moi", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -112,21 +117,23 @@ public class QlnvQdXdungKhoHdrController extends BaseController {
 	@ApiOperation(value = "Tra cứu Quyết định xây dựng kho tàng", response = List.class)
 	@PostMapping(value = "/tra-cuu", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Resp> selectAll(@RequestBody SimpleSearchReq simpleSearchReq) {
+	public ResponseEntity<Resp> selectAll(HttpServletRequest request, @RequestBody SimpleSearchReq simpleSearchReq) {
 		Resp resp = new Resp();
 		try {
 			int page = PaginationSet.getPage(simpleSearchReq.getPage());
 			int limit = PaginationSet.getLimit(simpleSearchReq.getLimit());
 			Pageable pageable = PageRequest.of(page, limit, Sort.by("id").ascending());
 
+			// Add them dk loc trong child
 			Session session = entityManager.unwrap(Session.class);
+			if (!getDvi(request).getCapDvi().equals(Contains.CAP_TONG_CUC)) {
+				Filter filter = session.enableFilter("pFilter");
+				filter.setParameter("maDvi", getDvi(request).getMaDvi());
+			}
 
-			Filter filter = session.enableFilter("pFilter");
-			filter.setParameter("maDvi", "HNO");
-
-			Page<QlnvQdXdungKhoHdr> qhKho = qlnvQdXdungKhoHdrRepository.selectParams(simpleSearchReq.getCode(),
+			Page<QlnvQdXdungKhoHdr2> qhKho = qlnvQdXdungKhoHdr2Repository.selectParams(simpleSearchReq.getCode(),
 					pageable);
-			
+
 			session.disableFilter("pFilter");
 
 			resp.setData(qhKho);

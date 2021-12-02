@@ -5,22 +5,28 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.FilterJoinTable;
+import org.hibernate.annotations.ParamDef;
 
 import lombok.Data;
 
 @Entity
 @Table(name = "QLNV_QD_XDUNG_KHO_HDR")
 @Data
-public class QlnvQdXdungKhoHdr implements Serializable {
+@FilterDef(name = "pFilter", parameters = @ParamDef(name = "maDvi", type = "string"))
+public class QlnvQdXdungKhoHdr2 implements Serializable {
 	/**
 	 * 
 	 */
@@ -48,11 +54,13 @@ public class QlnvQdXdungKhoHdr implements Serializable {
 	Date ngayPduyet;
 	String nguoiPduyet;
 	String loaiKhoach;
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "QLNV_QD_XDUNG_KHO_DTL", joinColumns = @JoinColumn(name = "id_qd_hdr"), inverseJoinColumns = @JoinColumn(name = "id"))
+	@FilterJoinTable(name = "pFilter", condition = ":maDvi = ma_dvi")
+	private List<QlnvQdXdungKhoDtl2> detailList = new ArrayList<QlnvQdXdungKhoDtl2>();
 
-	@OneToMany(mappedBy = "header", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<QlnvQdXdungKhoDtl> detailList = new ArrayList<QlnvQdXdungKhoDtl>();
-
-	public void setDetailList(List<QlnvQdXdungKhoDtl> detail) {
+	@FilterJoinTable(name = "pFilter", condition = "MA_DVI = :maDvi")
+	public void setDetailList(List<QlnvQdXdungKhoDtl2> detail) {
 		if (this.detailList == null) {
 			this.detailList = detail;
 		} else if (this.detailList != detail) {
@@ -63,13 +71,13 @@ public class QlnvQdXdungKhoHdr implements Serializable {
 		}
 	}
 
-	public QlnvQdXdungKhoHdr addDetail(QlnvQdXdungKhoDtl dt) {
+	public QlnvQdXdungKhoHdr2 addDetail(QlnvQdXdungKhoDtl2 dt) {
 		detailList.add(dt);
 		dt.setHeader(this);
 		return this;
 	}
 
-	public QlnvQdXdungKhoHdr removeDetail(QlnvQdXdungKhoDtl dt) {
+	public QlnvQdXdungKhoHdr2 removeDetail(QlnvQdXdungKhoDtl2 dt) {
 		detailList.remove(dt);
 		dt.setHeader(null);
 		return this;

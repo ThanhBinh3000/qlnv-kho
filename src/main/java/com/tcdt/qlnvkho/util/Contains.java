@@ -30,4 +30,9 @@ public class Contains {
 	public static final String NGUNG_HOAT_DONG = "02";
 	public static final String TAM_KHOA = "03";
 
+	// Cap trang don vi
+	public static final String CAP_TONG_CUC = "1";
+	public static final String CAP_CUC = "2";
+	public static final String CAP_CHI_CUC = "3";
+
 }

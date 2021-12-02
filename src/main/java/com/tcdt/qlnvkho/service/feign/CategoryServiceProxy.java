@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import feign.Headers;
 
-@FeignClient(name = "qlnv-category-hlb")
+@FeignClient(name = "qlnv-category")
 public interface CategoryServiceProxy {
 
 	@GetMapping("/dmuc-donvi/chi-tiet/{ids}")

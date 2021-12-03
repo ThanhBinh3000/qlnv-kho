@@ -59,7 +59,6 @@ public class QlnvQdXdungKhoHdr2 implements Serializable {
 	@FilterJoinTable(name = "pFilter", condition = ":maDvi = ma_dvi")
 	private List<QlnvQdXdungKhoDtl2> detailList = new ArrayList<QlnvQdXdungKhoDtl2>();
 
-	@FilterJoinTable(name = "pFilter", condition = "MA_DVI = :maDvi")
 	public void setDetailList(List<QlnvQdXdungKhoDtl2> detail) {
 		if (this.detailList == null) {
 			this.detailList = detail;

@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -49,29 +50,20 @@ public class QlnvQdXdungKhoHdr implements Serializable {
 	String nguoiPduyet;
 	String loaiKhoach;
 
-	@OneToMany(mappedBy = "header", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<QlnvQdXdungKhoDtl> detailList = new ArrayList<QlnvQdXdungKhoDtl>();
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "id_qd_hdr")
+	private List<QlnvQdXdungKhoDtl> children = new ArrayList<>();
 
-	public void setDetailList(List<QlnvQdXdungKhoDtl> detail) {
-		if (this.detailList == null) {
-			this.detailList = detail;
-		} else if (this.detailList != detail) {
-			this.detailList.clear();
-			if (detail != null) {
-				this.detailList.addAll(detail);
-			}
+	public void setChildren(List<QlnvQdXdungKhoDtl> children) {
+		this.children.clear();
+		for (QlnvQdXdungKhoDtl child : children) {
+			child.setParent(this);
 		}
+		this.children.addAll(children);
 	}
 
-	public QlnvQdXdungKhoHdr addDetail(QlnvQdXdungKhoDtl dt) {
-		detailList.add(dt);
-		dt.setHeader(this);
-		return this;
-	}
-
-	public QlnvQdXdungKhoHdr removeDetail(QlnvQdXdungKhoDtl dt) {
-		detailList.remove(dt);
-		dt.setHeader(null);
-		return this;
+	public void addChild(QlnvQdXdungKhoDtl child) {
+		child.setParent(this);
+		this.children.add(child);
 	}
 }

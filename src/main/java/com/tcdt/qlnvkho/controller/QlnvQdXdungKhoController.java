@@ -40,7 +40,9 @@ import com.tcdt.qlnvkho.table.QlnvQdXdungKhoDtl;
 import com.tcdt.qlnvkho.table.QlnvQdXdungKhoHdr;
 import com.tcdt.qlnvkho.table.QlnvQdXdungKhoHdr2;
 import com.tcdt.qlnvkho.util.Contains;
+import com.tcdt.qlnvkho.util.ObjectMapperUtils;
 import com.tcdt.qlnvkho.util.PaginationSet;
+import com.tcdt.qlnvkho.util.PathContains;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,7 +53,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/business/qd-xdung-kho")
 @Api(tags = "Quyết định xây dựng kho tàng")
-public class QlnvQdXdungKhoHdrController extends BaseController {
+public class QlnvQdXdungKhoController extends BaseController {
 	@Autowired
 	private EntityManager entityManager;
 
@@ -62,22 +64,24 @@ public class QlnvQdXdungKhoHdrController extends BaseController {
 	private QlnvQdXdungKhoHdr2Repository qlnvQdXdungKhoHdr2Repository;
 
 	@ApiOperation(value = "Tạo mới Quyết định xây dựng kho tàng", response = List.class)
-	@PostMapping(value = "/them-moi", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_TAO_MOI, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Resp> insert(HttpServletRequest request, @Valid @RequestBody QlnvQdXdungKhoHdrReq objReq) {
 		Resp resp = new Resp();
 		try {
 			List<QlnvQdXdungKhoDtlReq> dtlReqList = objReq.getDetail();
-			objReq.setDetail(null);
+
 			QlnvQdXdungKhoHdr dataMap = new ModelMapper().map(objReq, QlnvQdXdungKhoHdr.class);
 			dataMap.setNgayTao(getDateTimeNow());
 			dataMap.setTrangThai(Contains.TAO_MOI);
 			dataMap.setNguoiTao(getUserName(request));
-			for (QlnvQdXdungKhoDtlReq dtlReq : dtlReqList) {
-				QlnvQdXdungKhoDtl detail = new ModelMapper().map(dtlReq, QlnvQdXdungKhoDtl.class);
-				dataMap.addDetail(detail);
-			}
-			qlnvQdXdungKhoHdrRepository.save(dataMap);
+
+			List<QlnvQdXdungKhoDtl> dtls = ObjectMapperUtils.mapAll(dtlReqList, QlnvQdXdungKhoDtl.class);
+			dataMap.setChildren(dtls);
+
+			QlnvQdXdungKhoHdr createCheck = qlnvQdXdungKhoHdrRepository.save(dataMap);
+
+			resp.setData(createCheck);
 			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
 			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
@@ -89,7 +93,7 @@ public class QlnvQdXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "Xoá thông tin Quyết định xây dựng kho tàng", response = List.class, produces = MediaType.APPLICATION_JSON_VALUE)
-	@PostMapping(value = "/xoa", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_XOA, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> delete(@Valid @RequestBody IdSearchReq idSearchReq) {
 		Resp resp = new Resp();
@@ -115,7 +119,7 @@ public class QlnvQdXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "Tra cứu Quyết định xây dựng kho tàng", response = List.class)
-	@PostMapping(value = "/tra-cuu", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_TRA_CUU, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> selectAll(HttpServletRequest request, @RequestBody SimpleSearchReq simpleSearchReq) {
 		Resp resp = new Resp();
@@ -149,7 +153,7 @@ public class QlnvQdXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "Cập nhật Quyết định xây dựng kho tàng", response = List.class)
-	@PostMapping(value = "/cap-nhat", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_CAP_NHAT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Resp> update(HttpServletRequest request, @Valid @RequestBody QlnvQdXdungKhoHdrReq objReq) {
 		Resp resp = new Resp();
 		try {
@@ -164,16 +168,14 @@ public class QlnvQdXdungKhoHdrController extends BaseController {
 			QlnvQdXdungKhoHdr dataDB = QlnvQdXdungKhoHdr.get();
 
 			List<QlnvQdXdungKhoDtlReq> dtlReqList = objReq.getDetail();
-			objReq.setDetail(null);
 			QlnvQdXdungKhoHdr dataMap = new ModelMapper().map(objReq, QlnvQdXdungKhoHdr.class);
 
 			updateObjectToObject(dataDB, dataMap);
 			dataDB.setNgaySua(getDateTimeNow());
 			dataDB.setNguoiSua(getUserName(request));
-			for (QlnvQdXdungKhoDtlReq dtlReq : dtlReqList) {
-				QlnvQdXdungKhoDtl detail = new ModelMapper().map(dtlReq, QlnvQdXdungKhoDtl.class);
-				dataDB.addDetail(detail);
-			}
+
+			List<QlnvQdXdungKhoDtl> dtls = ObjectMapperUtils.mapAll(dtlReqList, QlnvQdXdungKhoDtl.class);
+			dataDB.setChildren(dtls);
 
 			qlnvQdXdungKhoHdrRepository.save(dataDB);
 
@@ -188,7 +190,7 @@ public class QlnvQdXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "Lấy chi tiết thông tin Quyết định xây dựng kho tàng", response = List.class)
-	@GetMapping(value = "/chi-tiet/{ids}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = PathContains.URL_CHI_TIET + "/{ids}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> detail(
 			@ApiParam(value = "ID Quyết định xây dựng kho tàng", example = "1", required = true) @PathVariable("ids") String ids) {
@@ -211,7 +213,7 @@ public class QlnvQdXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "Trình duyệt-01/Duyệt-02/Từ chối-03/Xoá-04 Quyết định xây dựng kho tàng", response = List.class)
-	@PostMapping(value = "/phe-duyet", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_PHE_DUYET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Resp> updateStatus(HttpServletRequest request, @Valid @RequestBody StatusReq stReq) {
 		Resp resp = new Resp();
 		try {

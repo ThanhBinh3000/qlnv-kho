@@ -10,10 +10,12 @@ import com.tcdt.qlnvkho.table.QlnvQdXdungKhoHdr2;
 
 public interface QlnvQdXdungKhoHdr2Repository extends CrudRepository<QlnvQdXdungKhoHdr2, Long> {
 
-	final String qr = "SELECT * FROM QLNV_QD_XDUNG_KHO_HDR WHERE (:soQdinh is null or lower(SO_QDINH) like lower(concat(concat('%', :soQdinh),'%')))";
-	final String qrCount = "SELECT count(1) FROM QLNV_QD_XDUNG_KHO_HDR WHERE (:soQdinh is null or lower(SO_QDINH) like lower(concat(concat('%', :soQdinh),'%')))";
+	final String querySelect = "SELECT *";
+	final String queryCount = "SELECT count(1)";
+	final String queryTable = " FROM QLNV_QD_XDUNG_KHO_HDR"
+			+ " WHERE (:soQdinh is null or lower(SO_QDINH) like lower(concat(concat('%', :soQdinh),'%')))";
 
-	@Query(value = qr, countQuery = qrCount, nativeQuery = true)
+	@Query(value = querySelect + queryTable, countQuery = queryCount + queryTable, nativeQuery = true)
 	Page<QlnvQdXdungKhoHdr2> selectParams(@Param("soQdinh") String soQdinh, Pageable pageable);
 
 }

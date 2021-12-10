@@ -39,5 +39,5 @@ public class QlnvQdXdungKhoDtl implements Serializable {
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_qd_hdr")
-    private QlnvQdXdungKhoHdr header;
+    private QlnvQdXdungKhoHdr parent;
 }

@@ -40,6 +40,7 @@ import com.tcdt.qlnvkho.table.QlnvDxkhXdungKhoDtl;
 import com.tcdt.qlnvkho.table.QlnvDxkhXdungKhoHdr;
 import com.tcdt.qlnvkho.util.Contains;
 import com.tcdt.qlnvkho.util.PaginationSet;
+import com.tcdt.qlnvkho.util.PathContains;
 import com.tcdt.qlnvkho.util.ReportPrint;
 
 import io.swagger.annotations.Api;
@@ -51,14 +52,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/business/dx-xd-kho")
+@RequestMapping(value = PathContains.QL_DX_XD_KHO)
 @Api(tags = "Đề xuất kế hoạch xây dựng Kho tàng trung hạn")
 public class QlnvDxkhXdungKhoHdrController extends BaseController {
 	@Autowired
 	private QlnvDxkhXdungKhoHdrRepository qlnvDxkhXdungKhoHdrRepository;
 
 	@ApiOperation(value = "Tạo mới đề xuất kế hoạch xây dựng kho tàng", response = List.class)
-	@PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_TAO_MOI, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Resp> insert(@Valid HttpServletRequest request, @RequestBody QlnvDxkhXdungKhoHdrReq objReq) {
 		Resp resp = new Resp();
@@ -88,7 +89,7 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "Xoá thông tin đề xuất kế hoạch xây dựng kho tàng", response = List.class, produces = MediaType.APPLICATION_JSON_VALUE)
-	@PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_XOA, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> delete(@RequestBody IdSearchReq idSearchReq) {
 		Resp resp = new Resp();
@@ -114,7 +115,7 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "Tra cứu đề xuất kế hoạch xây dựng kho tàng", response = List.class)
-	@PostMapping(value = "/findList", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_TRA_CUU, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> selectAll(@RequestBody QlnvDxkhXdungKhoHdrSearchReq simpleSearchReq) {
 		Resp resp = new Resp();
@@ -140,7 +141,7 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "Cập nhật đề xuất kế hoạch xây dựng kho tàng", response = List.class)
-	@PostMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_CAP_NHAT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Resp> update(@Valid HttpServletRequest request, @RequestBody QlnvDxkhXdungKhoHdrReq objReq) {
 		Resp resp = new Resp();
 		try {
@@ -181,7 +182,7 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "Lấy chi tiết thông tin đề xuất kế hoạch xây dựng kho tàng", response = List.class)
-	@GetMapping(value = "/chi-tiet/{ids}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = PathContains.URL_CHI_TIET + "/{ids}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> detail(
 			@ApiParam(value = "ID đề xuất kế hoạch xây dựng kho tàng", example = "1", required = true) @PathVariable("ids") String ids) {
@@ -204,8 +205,9 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "CẤP CỤC: Trình duyệt-01/Duyệt-02/Từ chối-03/Xoá-04 đề xuất kế hoạch xây dựng kho tàng", response = List.class)
-	@PostMapping(value = "/status", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Resp> updateStatus(@Valid HttpServletRequest request, @RequestBody StatusReq stReq) {
+	@PostMapping(value = PathContains.URL_PHE_DUYET
+			+ PathContains.URL_CAP_CUC, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Resp> updateStatus(@Valid HttpServletRequest req, @RequestBody StatusReq stReq) {
 		Resp resp = new Resp();
 		try {
 			if (StringUtils.isEmpty(stReq.getId()))
@@ -214,18 +216,16 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 			Optional<QlnvDxkhXdungKhoHdr> qHoach = qlnvDxkhXdungKhoHdrRepository.findById(Long.valueOf(stReq.getId()));
 			if (!qHoach.isPresent())
 				throw new Exception("Không tìm thấy dữ liệu");
-			qHoach.get().setTthaiCuc(stReq.getTrangThai());
+
 			String status = stReq.getTrangThai();
-			Calendar cal = Calendar.getInstance();
-			Authentication authentication = TokenAuthenticationService.getAuthentication(request);
 			switch (status) {
 			case Contains.CHO_DUYET:
-				qHoach.get().setNguoiGuiDuyet(authentication.getName());
-				qHoach.get().setNgayGuiDuyet(cal.getTime());
+				qHoach.get().setNguoiGuiDuyet(getUserName(req));
+				qHoach.get().setNgayGuiDuyet(getDateTimeNow());
 				break;
 			case Contains.DUYET:
-				qHoach.get().setNguoiPduyet(authentication.getName());
-				qHoach.get().setNgayPduyet(cal.getTime());
+				qHoach.get().setNguoiPduyet(getUserName(req));
+				qHoach.get().setNgayPduyet(getDateTimeNow());
 				break;
 			case Contains.TU_CHOI:
 				qHoach.get().setLdoTuchoi(stReq.getLyDo());
@@ -233,7 +233,10 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 			default:
 				break;
 			}
+
+			qHoach.get().setTthaiCuc(stReq.getTrangThai());
 			qlnvDxkhXdungKhoHdrRepository.save(qHoach.get());
+
 			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
 			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
@@ -246,8 +249,9 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "CẤP TỔNG CỤC: Trình duyệt-01/Duyệt-02/Từ chối-03/Xoá-04 đề xuất kế hoạch xây dựng kho tàng", response = List.class)
-	@PostMapping(value = "/tc-status", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Resp> updateStatusTongCuc(@Valid HttpServletRequest request, @RequestBody StatusReq stReq) {
+	@PostMapping(value = PathContains.URL_PHE_DUYET
+			+ PathContains.URL_CAP_TONG_CUC, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Resp> updateStatusTongCuc(@Valid HttpServletRequest req, @RequestBody StatusReq stReq) {
 		Resp resp = new Resp();
 		try {
 			if (StringUtils.isEmpty(stReq.getId()))
@@ -256,18 +260,16 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 			Optional<QlnvDxkhXdungKhoHdr> qHoach = qlnvDxkhXdungKhoHdrRepository.findById(Long.valueOf(stReq.getId()));
 			if (!qHoach.isPresent())
 				throw new Exception("Không tìm thấy dữ liệu");
-			qHoach.get().setTthaiTong(stReq.getTrangThai());
+
 			String status = stReq.getTrangThai();
-			Calendar cal = Calendar.getInstance();
-			Authentication authentication = TokenAuthenticationService.getAuthentication(request);
 			switch (status) {
 			case Contains.CHO_DUYET:
-				qHoach.get().setTcNguoiGuiDuyet(authentication.getName());
-				qHoach.get().setTcNgayGuiDuyet(cal.getTime());
+				qHoach.get().setTcNguoiGuiDuyet(getUserName(req));
+				qHoach.get().setTcNgayGuiDuyet(getDateTimeNow());
 				break;
 			case Contains.DUYET:
-				qHoach.get().setTcNguoiPduyet(authentication.getName());
-				qHoach.get().setTcNgayPduyet(cal.getTime());
+				qHoach.get().setTcNguoiPduyet(getUserName(req));
+				qHoach.get().setTcNgayPduyet(getDateTimeNow());
 				break;
 			case Contains.TU_CHOI:
 				qHoach.get().setTcLdoTuchoi(stReq.getLyDo());
@@ -275,7 +277,10 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 			default:
 				break;
 			}
+
+			qHoach.get().setTthaiTong(stReq.getTrangThai());
 			qlnvDxkhXdungKhoHdrRepository.save(qHoach.get());
+
 			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
 			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
@@ -288,7 +293,8 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "In thông tin đề xuất kế hoạch xây dựng kho tàng", response = List.class)
-	@GetMapping(value = "/in-dx/{ids}", produces = MediaType.APPLICATION_PDF_VALUE)
+	@GetMapping(value = PathContains.URL_KET_XUAT + PathContains.URL_THONG_TIN
+			+ "/{ids}", produces = MediaType.APPLICATION_PDF_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<byte[]> getReport(
 			@ApiParam(value = "ID đề xuất kế hoạch xây dựng kho tàng", example = "1", required = true) @PathVariable("ids") String ids) {
@@ -305,7 +311,8 @@ public class QlnvDxkhXdungKhoHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "In dự thảo đề xuất kế hoạch xây dựng kho tàng", response = List.class)
-	@GetMapping(value = "/in-dthao/{ids}", produces = MediaType.APPLICATION_PDF_VALUE)
+	@GetMapping(value = PathContains.URL_KET_XUAT + PathContains.URL_DU_THAO
+			+ "/{ids}", produces = MediaType.APPLICATION_PDF_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<byte[]> getReportDuThao(
 			@ApiParam(value = "ID đề xuất kế hoạch xây dựng kho tàng", example = "1", required = true) @PathVariable("ids") String ids) {

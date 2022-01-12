@@ -37,6 +37,7 @@ import com.tcdt.qlnvkho.response.Resp;
 import com.tcdt.qlnvkho.table.QlnvDuAn;
 import com.tcdt.qlnvkho.util.Contains;
 import com.tcdt.qlnvkho.util.PaginationSet;
+import com.tcdt.qlnvkho.util.PathContains;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,14 +48,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/business/du-an")
+@RequestMapping(value = PathContains.QL_DU_AN)
 @Api(tags = "Dự án")
 public class QlnvDuAnController extends BaseController {
 	@Autowired
 	private QlnvDuAnRepository qlnvDuAnRepository;
 
 	@ApiOperation(value = "Tạo mới Dự án", response = List.class)
-	@PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_TAO_MOI, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Resp> insert(@Valid HttpServletRequest request, @RequestBody QlnvDuAnReq objReq) {
 		Resp resp = new Resp();
@@ -78,7 +79,7 @@ public class QlnvDuAnController extends BaseController {
 	}
 
 	@ApiOperation(value = "Xoá thông tin Dự án", response = List.class, produces = MediaType.APPLICATION_JSON_VALUE)
-	@PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_XOA, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> delete(@RequestBody IdSearchReq idSearchReq) {
 		Resp resp = new Resp();
@@ -103,7 +104,7 @@ public class QlnvDuAnController extends BaseController {
 	}
 
 	@ApiOperation(value = "Tra cứu Dự án", response = List.class)
-	@PostMapping(value = "/findList", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_TRA_CUU, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> selectAll(@RequestBody QlnvDuAnSearchReq objReq) {
 		Resp resp = new Resp();
@@ -127,7 +128,7 @@ public class QlnvDuAnController extends BaseController {
 	}
 
 	@ApiOperation(value = "Cập nhật Dự án", response = List.class)
-	@PostMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_CAP_NHAT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Resp> update(@Valid HttpServletRequest request, @RequestBody QlnvDuAnReq objReq) {
 		Resp resp = new Resp();
 		try {
@@ -156,7 +157,7 @@ public class QlnvDuAnController extends BaseController {
 	}
 
 	@ApiOperation(value = "Lấy chi tiết thông tin Dự án", response = List.class)
-	@GetMapping(value = "/chi-tiet/{ids}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = PathContains.URL_CHI_TIET + "/{ids}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> detail(
 			@ApiParam(value = "ID Dự án", example = "1", required = true) @PathVariable("ids") String ids) {
@@ -179,8 +180,8 @@ public class QlnvDuAnController extends BaseController {
 	}
 
 	@ApiOperation(value = "Trình duyệt-01/Duyệt-02/Từ chối-03/Xoá-04 Dự án", response = List.class)
-	@PostMapping(value = "/status", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Resp> updateStatus(@Valid HttpServletRequest request, @RequestBody StatusReq stReq) {
+	@PostMapping(value = PathContains.URL_PHE_DUYET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Resp> updateStatus(@Valid HttpServletRequest req, @RequestBody StatusReq stReq) {
 		Resp resp = new Resp();
 		try {
 			if (StringUtils.isEmpty(stReq.getId()))
@@ -189,26 +190,29 @@ public class QlnvDuAnController extends BaseController {
 			Optional<QlnvDuAn> qHoach = qlnvDuAnRepository.findById(Long.valueOf(stReq.getId()));
 			if (!qHoach.isPresent())
 				throw new Exception("Không tìm thấy dữ liệu");
-			qHoach.get().setTrangThai(stReq.getTrangThai());
-			String status = stReq.getTrangThai();
-			Calendar cal = Calendar.getInstance();
-			Authentication authentication = TokenAuthenticationService.getAuthentication(request);
+
+			String status = stReq.getTrangThai() + qHoach.get().getTrangThai();
 			switch (status) {
-			case Contains.CHO_DUYET:
-				qHoach.get().setNguoiGuiDuyet(authentication.getName());
-				qHoach.get().setNgayGuiDuyet(cal.getTime());
+			case Contains.CHO_DUYET + Contains.MOI_TAO:
+				qHoach.get().setNguoiGuiDuyet(getUserName(req));
+				qHoach.get().setNgayGuiDuyet(getDateTimeNow());
 				break;
-			case Contains.DUYET:
-				qHoach.get().setNguoiPduyet(authentication.getName());
-				qHoach.get().setNgayPduyet(cal.getTime());
-				break;
-			case Contains.TU_CHOI:
+			case Contains.TU_CHOI + Contains.CHO_DUYET:
+				qHoach.get().setNguoiPduyet(getUserName(req));
+				qHoach.get().setNgayPduyet(getDateTimeNow());
 				qHoach.get().setLdoTuchoi(stReq.getLyDo());
 				break;
-			default:
+			case Contains.DUYET + Contains.CHO_DUYET:
+				qHoach.get().setNguoiPduyet(getUserName(req));
+				qHoach.get().setNgayPduyet(getDateTimeNow());
 				break;
+			default:
+				throw new Exception("Phê duyệt không thành công");
 			}
+
+			qHoach.get().setTrangThai(stReq.getTrangThai());
 			qlnvDuAnRepository.save(qHoach.get());
+
 			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
 			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
@@ -221,7 +225,7 @@ public class QlnvDuAnController extends BaseController {
 	}
 
 	@ApiOperation(value = "Kích hoạt/ Tạm dừng Dự án", response = List.class)
-	@PostMapping(value = "/active", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_KICH_HOAT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Resp> updateStatus(@RequestBody IdSearchReq id) {
 		Resp resp = new Resp();
 		try {

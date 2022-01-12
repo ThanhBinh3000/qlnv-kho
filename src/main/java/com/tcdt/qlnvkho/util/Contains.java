@@ -47,5 +47,9 @@ public class Contains {
 
 	public static final String QUYET_DINH = "QD";
 	public static final String QUYET_DINH_DC = "DC";
+	
+	//Loai quyet dinh
+	public static final String QD_MOI = "00";
+	public static final String QD_DIEU_CHINH = "01";
 
 }

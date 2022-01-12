@@ -2,6 +2,7 @@ package com.tcdt.qlnvkho.table;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,7 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Data;
 
@@ -37,8 +38,8 @@ public class QlnvQhoachKhoDtl implements Serializable {
 	BigDecimal tongDutoan;
 	String noiDung;
 	
-	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_qh_hdr")
+	@JsonBackReference
     private QlnvQhoachKhoHdr header;
 }

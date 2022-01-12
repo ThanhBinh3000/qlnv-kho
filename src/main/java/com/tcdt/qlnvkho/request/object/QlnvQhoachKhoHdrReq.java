@@ -6,6 +6,9 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.tcdt.qlnvkho.util.Contains;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -20,6 +23,7 @@ public class QlnvQhoachKhoHdrReq {
 	Integer qhTuNam;
 	@NotNull(message = "Không được để trống")
 	Integer qhDenNam;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Contains.FORMAT_DATE_STR)
 	Date ngayQd;
 	@Size(max = 5, message = "Loại quyết định không được vượt quá 5 ký tự")
 	String loaiQd;

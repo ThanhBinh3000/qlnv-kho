@@ -26,5 +26,6 @@ public class PathContains {
 	public static final String QL_DU_AN = "/qly-du-an";
 	public static final String QL_DX_XD_KHO = "/qly-dx-xd-kho";
 	public static final String QL_KHO_TANG = "/qly-kho-tang";
+	public static final String QL_QH_KHO_TANG = "/qly-qh-kho-tang";
 
 }

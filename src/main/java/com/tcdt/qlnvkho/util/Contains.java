@@ -1,6 +1,9 @@
 package com.tcdt.qlnvkho.util;
 
 public class Contains {
+	public static final String FORMAT_DATE_STR = "dd/MM/yyyy";
+	public static final String FORMAT_DATE_TIME_STR = "dd/MM/yyyy HH:mm:ss";
+	
 	// Trang thai response
 	public static final int RESP_SUCC = 0;
 	public static final int RESP_FAIL = 1;
@@ -34,5 +37,15 @@ public class Contains {
 	public static final String CAP_TONG_CUC = "1";
 	public static final String CAP_CUC = "2";
 	public static final String CAP_CHI_CUC = "3";
+
+	// Loai dieu chinh quyet dinh
+	public static final String CHUA_DC = "0";
+	public static final String DC_GIA = "1";
+	public static final String DC_SO_LUONG = "2";
+	public static final String DC_THOI_GIAN = "3";
+	public static final String DC_KHAC = "4";
+
+	public static final String QUYET_DINH = "QD";
+	public static final String QUYET_DINH_DC = "DC";
 
 }

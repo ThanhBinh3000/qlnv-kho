@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,6 +35,7 @@ import com.tcdt.qlnvkho.enums.EnumResponse;
 import com.tcdt.qlnvkho.jwt.TokenAuthenticationService;
 import com.tcdt.qlnvkho.service.feign.CategoryServiceProxy;
 import com.tcdt.qlnvkho.table.catalog.QlnvDmDonvi;
+import com.tcdt.qlnvkho.util.Contains;
 import com.tcdt.qlnvkho.util.Request;
 
 public class BaseController {
@@ -121,7 +123,7 @@ public class BaseController {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	<T> void updateMapToObject(Map<String, String> params, T source, Class cls) throws JsonMappingException {
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.setDateFormat(new SimpleDateFormat("dd/MM/yyyy"));
+		mapper.setDateFormat(new SimpleDateFormat(Contains.FORMAT_DATE_STR));
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		Object overrideObj = mapper.convertValue(params, cls);
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -130,7 +132,7 @@ public class BaseController {
 
 	public <T> void updateObjectToObject(T source, T objectEdit) throws JsonMappingException {
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.setDateFormat(new SimpleDateFormat("dd/MM/yyyy"));
+		mapper.setDateFormat(new SimpleDateFormat(Contains.FORMAT_DATE_STR));
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		mapper.updateValue(source, objectEdit);
@@ -201,10 +203,34 @@ public class BaseController {
 	}
 
 	public static Date getDateTimeNow() throws Exception {
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		DateFormat df = new SimpleDateFormat(Contains.FORMAT_DATE_TIME_STR);
 		Date date = new Date();
 		String local = df.format(date);
-		Date datenow = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(local);
+		Date datenow = new SimpleDateFormat(Contains.FORMAT_DATE_TIME_STR).parse(local);
 		return datenow;
+	}
+
+	public static String convertDateToString(Date date) throws Exception {
+		DateFormat df = new SimpleDateFormat(Contains.FORMAT_DATE_STR);
+		return df.format(date);
+	}
+
+	public static String getUUID(String code) {
+		if (StringUtils.isEmpty(code))
+			return UUID.randomUUID().toString().replace("-", "");
+		return code + UUID.randomUUID().toString().replace("-", "");
+	}
+
+	public static String getDateText(Date date) throws Exception {
+		DateTimeFormatter df = DateTimeFormatter.ofPattern(Contains.FORMAT_DATE_STR);
+		String dateStr = convertDateToString(date);
+		LocalDate currentDate = LocalDate.parse(dateStr, df);
+		// Get day from date
+		int day = currentDate.getDayOfMonth();
+		// Get month from date
+		int month = currentDate.getMonthValue();
+		// Get year from date
+		int year = currentDate.getYear();
+		return "Ngày " + day + " tháng " + month + " năm " + year;
 	}
 }

@@ -8,12 +8,13 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.tcdt.qlnvkho.util.Contains;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class QlnvKhoTangReq{
+public class QlnvKhoTangReq {
 	@ApiModelProperty(notes = "Bắt buộc set đối với update")
 	private Long id;
 	@NotNull(message = "Không được để trống")
@@ -42,8 +43,8 @@ public class QlnvKhoTangReq{
 	String maKhoCu;
 	@Size(max = 50, message = "Số quyết định không được vượt quá 50 ký tự")
 	String soQdinh;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Contains.FORMAT_DATE_STR)
 	@Past
 	Date ngayQdinh;
-	
+
 }

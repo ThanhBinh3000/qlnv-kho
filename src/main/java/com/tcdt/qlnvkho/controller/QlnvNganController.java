@@ -112,8 +112,8 @@ public class QlnvNganController extends BaseController {
 	public ResponseEntity<Resp> selectAll(@RequestBody SimpleSearchReq simpleSearchReq) {
 		Resp resp = new Resp();
 		try {
-			int page = PaginationSet.getPage(simpleSearchReq.getPage());
-			int limit = PaginationSet.getLimit(simpleSearchReq.getLimit());
+			int page = PaginationSet.getPage(simpleSearchReq.getPaggingReq().getPage());
+			int limit = PaginationSet.getLimit(simpleSearchReq.getPaggingReq().getLimit());
 			Pageable pageable = PageRequest.of(page, limit);
 
 			Page<QlnvNgan> qhKho = qlnvNganRepository.selectParams(simpleSearchReq.getCode(), pageable);

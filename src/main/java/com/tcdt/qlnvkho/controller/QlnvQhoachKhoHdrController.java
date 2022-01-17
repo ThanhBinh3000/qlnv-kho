@@ -6,11 +6,13 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,7 @@ import com.tcdt.qlnvkho.response.Resp;
 import com.tcdt.qlnvkho.secification.QlnvQhoachKhoHdrSpecification;
 import com.tcdt.qlnvkho.table.QlnvQhoachKhoDtl;
 import com.tcdt.qlnvkho.table.QlnvQhoachKhoHdr;
+import com.tcdt.qlnvkho.table.catalog.QlnvDmDonvi;
 import com.tcdt.qlnvkho.util.Contains;
 import com.tcdt.qlnvkho.util.ObjectMapperUtils;
 import com.tcdt.qlnvkho.util.PaginationSet;
@@ -117,8 +120,8 @@ public class QlnvQhoachKhoHdrController extends BaseController {
 	public ResponseEntity<Resp> selectAll(@RequestBody SimpleSearchReq objReq) {
 		Resp resp = new Resp();
 		try {
-			int page = PaginationSet.getPage(objReq.getPage());
-			int limit = PaginationSet.getLimit(objReq.getLimit());
+			int page = PaginationSet.getPage(objReq.getPaggingReq().getPage());
+			int limit = PaginationSet.getLimit(objReq.getPaggingReq().getLimit());
 			Pageable pageable = PageRequest.of(page, limit);
 
 			Page<QlnvQhoachKhoHdr> qhKho = qlnvQhoachKhoHdrRepository
@@ -235,6 +238,77 @@ public class QlnvQhoachKhoHdrController extends BaseController {
 			qHoach.get().setTrangThai(stReq.getTrangThai());
 			qlnvQhoachKhoHdrRepository.save(qHoach.get());
 
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
+		} catch (Exception e) {
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
+			resp.setMsg(e.getMessage());
+			log.error(e.getMessage());
+		}
+		return ResponseEntity.ok(resp);
+	}
+
+	@ApiOperation(value = "Tra cứu thông tin quy hoạch kho tàng dành cho cấp cục", response = List.class)
+	@PostMapping(value = PathContains.URL_TRA_CUU
+			+ PathContains.URL_CAP_CUC, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<Resp> colectionChild(HttpServletRequest request, @Valid @RequestBody SimpleSearchReq objReq) {
+		Resp resp = new Resp();
+		try {
+			int page = PaginationSet.getPage(objReq.getPaggingReq().getPage());
+			int limit = PaginationSet.getLimit(objReq.getPaggingReq().getLimit());
+			Pageable pageable = PageRequest.of(page, limit, Sort.by("id").ascending());
+
+			// Lay thong tin don vi quan ly
+			QlnvDmDonvi objDvi = getDvi(request);
+			if (ObjectUtils.isEmpty(objDvi) || StringUtils.isEmpty(objDvi.getCapDvi()))
+				throw new UnsupportedOperationException("Không lấy được thông tin đơn vị");
+
+			// Add them dk loc trong child
+			if (!objDvi.getCapDvi().equals(Contains.CAP_TONG_CUC))
+				objReq.setMaDvi(objDvi.getMaDvi());
+
+			Page<QlnvQhoachKhoHdr> dataPage = qlnvQhoachKhoHdrRepository
+					.findAll(QlnvQhoachKhoHdrSpecification.buildSearchChildQuery(objReq), pageable);
+
+			resp.setData(dataPage);
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
+		} catch (Exception e) {
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
+			resp.setMsg(e.getMessage());
+			log.error(e.getMessage());
+		}
+
+		return ResponseEntity.ok(resp);
+	}
+
+	@ApiOperation(value = "Lấy chi tiết thông tin quy hoạch kho tàng dành cho cấp cục", response = List.class)
+	@PostMapping(value = PathContains.URL_CHI_TIET
+			+ PathContains.URL_CAP_CUC, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<Resp> detailChild(@Valid @RequestBody IdSearchReq objReq, HttpServletRequest request) {
+		Resp resp = new Resp();
+		try {
+			if (StringUtils.isEmpty(objReq.getId()))
+				throw new UnsupportedOperationException("Không tồn tại bản ghi");
+
+			// Lay thong tin don vi quan ly
+			QlnvDmDonvi objDvi = getDvi(request);
+			if (ObjectUtils.isEmpty(objDvi) || StringUtils.isEmpty(objDvi.getCapDvi()))
+				throw new UnsupportedOperationException("Không lấy được thông tin đơn vị");
+
+			// Add them dk loc trong child
+			if (!objDvi.getCapDvi().equals(Contains.CAP_TONG_CUC))
+				objReq.setMaDvi(objDvi.getMaDvi());
+
+			List<QlnvQhoachKhoHdr> lKhoHdrs = qlnvQhoachKhoHdrRepository
+					.findAll(QlnvQhoachKhoHdrSpecification.buildFindByIdQuery(objReq));
+
+			if (lKhoHdrs.isEmpty())
+				throw new UnsupportedOperationException("Không tồn tại bản ghi");
+
+			resp.setData(lKhoHdrs.get(0));
 			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
 			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {

@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.tcdt.qlnvkho.request.IdSearchReq;
 import com.tcdt.qlnvkho.request.SimpleSearchReq;
-import com.tcdt.qlnvkho.table.QlnvQhoachKhoDtl;
 import com.tcdt.qlnvkho.table.QlnvQhoachKhoHdr;
 
 public class QlnvQhoachKhoHdrSpecification {
@@ -50,6 +49,7 @@ public class QlnvQhoachKhoHdrSpecification {
 			 */
 			private static final long serialVersionUID = 5640036112400303704L;
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public Predicate toPredicate(Root<QlnvQhoachKhoHdr> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
 				Predicate predicate = builder.conjunction();
@@ -58,12 +58,8 @@ public class QlnvQhoachKhoHdrSpecification {
 
 				String soQdinh = objReq.getCode();
 				String maDvi = objReq.getMaDvi();
-				
-				@SuppressWarnings("unchecked")
+
 				Join<Object, Object> fetchParent = (Join<Object, Object>) root.fetch("detailList", JoinType.LEFT);
-				
-				//root.fetch("detailList", JoinType.LEFT);
-				//Join<QlnvQhoachKhoHdr, QlnvQhoachKhoDtl> joinQuerry = root.join("detailList");
 
 				if (StringUtils.isNotEmpty(soQdinh))
 					predicate.getExpressions()
@@ -85,6 +81,7 @@ public class QlnvQhoachKhoHdrSpecification {
 			 */
 			private static final long serialVersionUID = -1609160279354911278L;
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public Predicate toPredicate(Root<QlnvQhoachKhoHdr> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
 				Predicate predicate = builder.conjunction();
@@ -94,12 +91,11 @@ public class QlnvQhoachKhoHdrSpecification {
 				Long id = objReq.getId();
 				String maDvi = objReq.getMaDvi();
 
-				root.fetch("detailList", JoinType.LEFT);
-				Join<QlnvQhoachKhoHdr, QlnvQhoachKhoDtl> joinQuerry = root.join("detailList");
+				Join<Object, Object> fetchParent = (Join<Object, Object>) root.fetch("detailList", JoinType.LEFT);
 
 				predicate.getExpressions().add(builder.and(builder.equal(root.get("id"), id)));
 				if (StringUtils.isNotBlank(maDvi))
-					predicate.getExpressions().add(builder.and(builder.equal(joinQuerry.get("maDvi"), maDvi)));
+					predicate.getExpressions().add(builder.and(builder.equal(fetchParent.get("maDvi"), maDvi)));
 
 				return predicate;
 			}

@@ -58,16 +58,19 @@ public class QlnvQhoachKhoHdrSpecification {
 
 				String soQdinh = objReq.getCode();
 				String maDvi = objReq.getMaDvi();
-
-				root.fetch("detailList", JoinType.LEFT);
-				Join<QlnvQhoachKhoHdr, QlnvQhoachKhoDtl> joinQuerry = root.join("detailList");
+				
+				@SuppressWarnings("unchecked")
+				Join<Object, Object> fetchParent = (Join<Object, Object>) root.fetch("detailList", JoinType.LEFT);
+				
+				//root.fetch("detailList", JoinType.LEFT);
+				//Join<QlnvQhoachKhoHdr, QlnvQhoachKhoDtl> joinQuerry = root.join("detailList");
 
 				if (StringUtils.isNotEmpty(soQdinh))
 					predicate.getExpressions()
 							.add(builder.like(builder.lower(root.get("soQdinh")), "%" + soQdinh.toLowerCase() + "%"));
 
 				if (StringUtils.isNotBlank(maDvi))
-					predicate.getExpressions().add(builder.and(builder.equal(joinQuerry.get("maDvi"), maDvi)));
+					predicate.getExpressions().add(builder.and(builder.equal(fetchParent.get("maDvi"), maDvi)));
 
 				return predicate;
 			}

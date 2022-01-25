@@ -51,5 +51,9 @@ public class Contains {
 	//Loai quyet dinh
 	public static final String QD_MOI = "00";
 	public static final String QD_DIEU_CHINH = "01";
+	
+	//Loai ke hoach
+	public static final String KH_HANG_NAM = "00";
+	public static final String KH_THUONG_XUYEN = "01";
 
 }

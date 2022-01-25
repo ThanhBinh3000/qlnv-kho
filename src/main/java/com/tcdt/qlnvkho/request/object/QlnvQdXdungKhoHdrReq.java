@@ -44,5 +44,8 @@ public class QlnvQdXdungKhoHdrReq {
 	@Size(max = 250, message = "Lý do từ chối không được vượt quá 250 ký tự")
 	String ldoTuchoi;
 	
+	@Size(max = 2, message = "Loại kế hoạch không được vượt quá 2 ký tự")
+	String loaiKhoach;
+	
 	private List<QlnvQdXdungKhoDtlReq> detail;
 }

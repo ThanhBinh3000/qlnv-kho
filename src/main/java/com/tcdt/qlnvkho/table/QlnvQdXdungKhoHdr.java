@@ -50,8 +50,7 @@ public class QlnvQdXdungKhoHdr implements Serializable {
 	String nguoiPduyet;
 	String loaiKhoach;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "id_qd_hdr")
+	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<QlnvQdXdungKhoDtl> children = new ArrayList<>();
 
 	public void setChildren(List<QlnvQdXdungKhoDtl> children) {

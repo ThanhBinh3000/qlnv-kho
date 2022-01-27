@@ -65,7 +65,7 @@ public class Contains {
 
 	// Loai ke hoach
 	public static final String KH_HANG_NAM = "00";
-	public static final String KH_TH_XUYEN = "01";
+	public static final String KH_THUONG_XUYEN  = "01";
 	public static final String KH_TRUNG_HAN = "02";
 
 	public static final Map<String, String> mpLoaiDX;

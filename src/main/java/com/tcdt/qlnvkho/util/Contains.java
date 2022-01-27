@@ -83,10 +83,9 @@ public class Contains {
 
 	public static final Map<String, String> mpLoaiDxTh;
 	static {
-		mpLoaiDxTh = Maps.<String, String>buildMap()
-				.put(Contains.TH_DX_CCDC_PVC, "Đề xuất kế hoạch xây dựng kho tàng trung hạn")
-				.put(Contains.TH_DX_MMOC, "Đề xuất kế hoạch xây dựng kho tàng hàng năm")
-				.put(Contains.TH_NHC_BHIEM, "Đề xuất kế hoạch sửa chữa lớn kho tàng hàng năm").get();
+		mpLoaiDxTh = Maps.<String, String>buildMap().put(Contains.TH_DX_CCDC_PVC, "Tổng hợp đề xuất CCDC và màng PVC")
+				.put(Contains.TH_DX_MMOC, "Tổng hợp đề xuất máy móc thiết bị")
+				.put(Contains.TH_NHC_BHIEM, "Tổng hợp đề xuất nhu cầu tham gia bảo hiểm").get();
 	}
 
 	public static String getLoaiDxTh(String key) {

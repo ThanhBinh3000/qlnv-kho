@@ -1,9 +1,11 @@
 package com.tcdt.qlnvkho.util;
 
+import java.util.Map;
+
 public class Contains {
 	public static final String FORMAT_DATE_STR = "dd/MM/yyyy";
 	public static final String FORMAT_DATE_TIME_STR = "dd/MM/yyyy HH:mm:ss";
-	
+
 	// Trang thai response
 	public static final int RESP_SUCC = 0;
 	public static final int RESP_FAIL = 1;
@@ -47,9 +49,48 @@ public class Contains {
 
 	public static final String QUYET_DINH = "QD";
 	public static final String QUYET_DINH_DC = "DC";
-	
-	//Loai quyet dinh
+
+	// Loai quyet dinh
 	public static final String QD_MOI = "00";
 	public static final String QD_DIEU_CHINH = "01";
+
+	// Loai de xuat
+	public static final String DXKH_TRUNG_HAN = "00";
+	public static final String DXKH_HANG_NAM = "01";
+	public static final String DXKH_SC_HNAM = "02";
+	public static final String DXKH_SC_TXUYEN = "03";
+	public static final String TH_DX_CCDC_PVC = "04";
+	public static final String TH_DX_MMOC = "05";
+	public static final String TH_NHC_BHIEM = "06";
+
+	// Loai ke hoach
+	public static final String KH_HANG_NAM = "00";
+	public static final String KH_TH_XUYEN = "01";
+	public static final String KH_TRUNG_HAN = "02";
+
+	public static final Map<String, String> mpLoaiDX;
+	static {
+		mpLoaiDX = Maps.<String, String>buildMap()
+				.put(Contains.DXKH_TRUNG_HAN, "Đề xuất kế hoạch xây dựng kho tàng trung hạn")
+				.put(Contains.DXKH_HANG_NAM, "Đề xuất kế hoạch xây dựng kho tàng hàng năm")
+				.put(Contains.DXKH_SC_HNAM, "Đề xuất kế hoạch sửa chữa lớn kho tàng hàng năm")
+				.put(Contains.DXKH_SC_TXUYEN, "Đề xuất kế hoạch sửa chữa kho tàng thường xuyên").get();
+	}
+
+	public static String getLoaiDx(String key) {
+		return Contains.mpLoaiDX.get(key);
+	}
+
+	public static final Map<String, String> mpLoaiDxTh;
+	static {
+		mpLoaiDxTh = Maps.<String, String>buildMap()
+				.put(Contains.TH_DX_CCDC_PVC, "Đề xuất kế hoạch xây dựng kho tàng trung hạn")
+				.put(Contains.TH_DX_MMOC, "Đề xuất kế hoạch xây dựng kho tàng hàng năm")
+				.put(Contains.TH_NHC_BHIEM, "Đề xuất kế hoạch sửa chữa lớn kho tàng hàng năm").get();
+	}
+
+	public static String getLoaiDxTh(String key) {
+		return Contains.mpLoaiDxTh.get(key);
+	}
 
 }

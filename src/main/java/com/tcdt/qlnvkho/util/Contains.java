@@ -61,9 +61,9 @@ public class Contains {
 	public static final String DA_KHO_CAI_TAO = "01";
 	
 	//Nhom Du An Kho
-	public static final String DA_KHO_NHOM_A = "00";
-	public static final String DA_KHO_NHOM_B = "01";
-	public static final String DA_KHO_NHOM_C = "02";
+	public static final String DA_KHO_NHOM_A = "A";
+	public static final String DA_KHO_NHOM_B = "B";
+	public static final String DA_KHO_NHOM_C = "C";
 	
 	//Hinh thuc Du An Kho
 	public static final String DA_KHO_HT_TAO_MOI = "00";
@@ -74,4 +74,25 @@ public class Contains {
 	public static final String DA_KHO_NKP_ODA = "01";
 	public static final String DA_KHO_NKP_NTN = "02";
 	
+	// Hinh thuc dau thau kho
+	public static final String DT_KHO_HT_DT_RONG_RAI = "00";
+	public static final String DT_KHO_HT_DT_HAN_CHE = "01";
+	public static final String DT_KHO_HT_DT_CHI_DINH_THAU = "02";
+	public static final String DT_KHO_HT_DT_CHAO_HANG_CANH_TRANH = "03";
+	public static final String DT_KHO_HT_DT_MUA_SAM_TRUC_TIEP = "04";
+	public static final String DT_KHO_HT_DT_TU_THUC_HIEN = "05";
+	public static final String DT_KHO_HT_DT_TU_LUA_CHON_TRONG_THDB = "06";
+	public static final String DT_KHO_HT_DT_TU_THAM_GIA_THUC_HIEN_CUA_CD = "07";
+	
+	// Phuong thuc dau thau kho
+	public static final String DT_KHO_PT_DT_1_GIAI_DOAN_1_GHS = "01";
+	public static final String DT_KHO_PT_DT_1_GIAI_DOAN_2_GHS = "02";
+	public static final String DT_KHO_PT_DT_2_GIAI_DOAN_1_GHS = "03";
+	public static final String DT_KHO_PT_DT_2_GIAI_DOAN_2_GHS = "04";
+	
+	// Hinh Thuc hop dong dau thau kho
+	public static final String DT_KHO_HT_HD_TRON_GOI = "01";
+	public static final String DT_KHO_HT_HD_THEO_DON_GIA = "02";
+	public static final String DT_KHO_HT_HD_THEO_DON_GIA_DIEU = "03";
 }
+

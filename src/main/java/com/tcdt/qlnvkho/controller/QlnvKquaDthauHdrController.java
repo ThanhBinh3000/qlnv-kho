@@ -1,6 +1,5 @@
 package com.tcdt.qlnvkho.controller;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tcdt.qlnvkho.jwt.TokenAuthenticationService;
+import com.tcdt.qlnvkho.enums.EnumResponse;
 import com.tcdt.qlnvkho.repository.QlnvKquaDthauHdrRepository;
 import com.tcdt.qlnvkho.repository.catalog.QlnvDmDonviRepository;
 import com.tcdt.qlnvkho.request.BaseRequest;
@@ -36,11 +34,14 @@ import com.tcdt.qlnvkho.request.object.StatusReq;
 import com.tcdt.qlnvkho.request.search.QlnvDmDonviSearchReq;
 import com.tcdt.qlnvkho.request.search.QlnvKquaDthauHdrSearchReq;
 import com.tcdt.qlnvkho.response.Resp;
+import com.tcdt.qlnvkho.secification.QlnvKquaDthauHdrSpecification;
 import com.tcdt.qlnvkho.table.QlnvKquaDthauDtl;
 import com.tcdt.qlnvkho.table.QlnvKquaDthauHdr;
 import com.tcdt.qlnvkho.table.catalog.QlnvDmDonvi;
 import com.tcdt.qlnvkho.util.Contains;
+import com.tcdt.qlnvkho.util.ObjectMapperUtils;
 import com.tcdt.qlnvkho.util.PaginationSet;
+import com.tcdt.qlnvkho.util.PathContains;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,7 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/business/kqua-dthau")
+@RequestMapping(value = PathContains.QL_KQUA_DTHAU)
 @Api(tags = "Kết quả đấu thầu")
 public class QlnvKquaDthauHdrController extends BaseController {
 	@Autowired
@@ -61,29 +62,26 @@ public class QlnvKquaDthauHdrController extends BaseController {
 	
 	
 	@ApiOperation(value = "Tạo mới Kết quả đấu thầu", response = List.class)
-	@PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_TAO_MOI, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Resp> insert(@Valid HttpServletRequest request, @RequestBody QlnvKquaDthauHdrReq objReq) {
 		Resp resp = new Resp();
-		Calendar cal = Calendar.getInstance();
 		try {
-			List<QlnvKquaDthauDtlReq> dtlReqList = objReq.getDetail();
-			objReq.setDetail(null);
 			QlnvKquaDthauHdr dataMap = new ModelMapper().map(objReq, QlnvKquaDthauHdr.class);
-			Authentication authentication = TokenAuthenticationService.getAuthentication(request);
-			dataMap.setNgayTao(cal.getTime());
+			dataMap.setNgayTao(getDateTimeNow());
 			dataMap.setTrangThai(Contains.TAO_MOI);
-			dataMap.setNguoiTao(authentication.getName());
-				for (QlnvKquaDthauDtlReq dtlReq : dtlReqList) {
-					QlnvKquaDthauDtl detail = new ModelMapper().map(dtlReq, QlnvKquaDthauDtl.class);
-					dataMap.addDetail(detail);
-				}
-				qlnvKquaDthauHdrRepository.save(dataMap);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			dataMap.setNguoiTao(getUserName(request));
+
+			List<QlnvKquaDthauDtl> dtls = ObjectMapperUtils.mapAll(objReq.getDetail(), QlnvKquaDthauDtl.class);
+			dataMap.setDetailList(dtls);
+
+			qlnvKquaDthauHdrRepository.save(dataMap);
+			resp.setData(dataMap);
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -92,7 +90,7 @@ public class QlnvKquaDthauHdrController extends BaseController {
 
 
 	@ApiOperation(value = "Xoá thông tin Kết quả đấu thầu", response = List.class, produces = MediaType.APPLICATION_JSON_VALUE)
-	@PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_XOA, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> delete(@RequestBody IdSearchReq idSearchReq) {
 		Resp resp = new Resp();
@@ -105,9 +103,12 @@ public class QlnvKquaDthauHdrController extends BaseController {
 				throw new Exception("Không tìm thấy dữ liệu cần xoá");
 			//QlnvKquaDthauDtlRepository.deleteByIdQhHdr(qhoachId);
 			qlnvKquaDthauHdrRepository.deleteById(qhoachId);
+			
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -116,7 +117,7 @@ public class QlnvKquaDthauHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "Tra cứu Kết quả đấu thầu", response = List.class)
-	@PostMapping(value = "/findList", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_TRA_CUU, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> selectAll(@RequestBody QlnvKquaDthauHdrSearchReq objReq) {
 		Resp resp = new Resp();
@@ -125,12 +126,13 @@ public class QlnvKquaDthauHdrController extends BaseController {
 			int limit = PaginationSet.getLimit(objReq.getPaggingReq().getLimit());
 			Pageable pageable = PageRequest.of(page, limit, Sort.by("id").ascending());
 
-			Page<QlnvKquaDthauHdr> qhKho = qlnvKquaDthauHdrRepository.selectParams(objReq.getSoQdinhPduyet(),objReq.getSoQdinh(), pageable);
+			Page<QlnvKquaDthauHdr> qhKho = qlnvKquaDthauHdrRepository.findAll(QlnvKquaDthauHdrSpecification.buildSearchQuery(objReq), pageable);
 
-			resp.setStatusCode(Contains.RESP_SUCC);
 			resp.setData(qhKho);
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
@@ -139,46 +141,44 @@ public class QlnvKquaDthauHdrController extends BaseController {
 	}
 
 	@ApiOperation(value = "Cập nhật Kết quả đấu thầu", response = List.class)
-	@PostMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_CAP_NHAT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Resp> update(@Valid HttpServletRequest request,@RequestBody QlnvKquaDthauHdrReq objReq) {
 		Resp resp = new Resp();
 		try {
+			
 			if (StringUtils.isEmpty(objReq.getId()))
 				throw new Exception("Sửa thất bại, không tìm thấy dữ liệu");
-			Calendar cal = Calendar.getInstance();
-			Optional<QlnvKquaDthauHdr> QlnvKquaDthauHdr = qlnvKquaDthauHdrRepository.findById(Long.valueOf(objReq.getId()));
-			if (!QlnvKquaDthauHdr.isPresent())
+
+			Optional<QlnvKquaDthauHdr> optional = qlnvKquaDthauHdrRepository.findById(Long.valueOf(objReq.getId()));
+			if (!optional.isPresent())
 				throw new Exception("Không tìm thấy dữ liệu cần sửa");
-			QlnvKquaDthauHdr dataDTB = QlnvKquaDthauHdr.get();
+
+			QlnvKquaDthauHdr dataDB = optional.get();
+
 			List<QlnvKquaDthauDtlReq> dtlReqList = objReq.getDetail();
-			objReq.setDetail(null);
 			QlnvKquaDthauHdr dataMap = new ModelMapper().map(objReq, QlnvKquaDthauHdr.class);
-			Authentication authentication = TokenAuthenticationService.getAuthentication(request);
-			updateObjectToObject(dataDTB, dataMap);
-			dataDTB.setNgaySua(cal.getTime());
-			dataDTB.setNguoiSua(authentication.getName());
-			List<QlnvKquaDthauDtl> dtlList = dataDTB.getDetailList();
-			for (QlnvKquaDthauDtl dtl : dtlList) {
-				dataDTB.removeDetail(dtl);
-			}
-			for (QlnvKquaDthauDtlReq dtlReq : dtlReqList) {
-				QlnvKquaDthauDtl detail = new ModelMapper().map(dtlReq, QlnvKquaDthauDtl.class);
-				dataDTB.addDetail(detail);
-				//detailList.add(detail);
-			}
-			qlnvKquaDthauHdrRepository.save(dataDTB);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+
+			updateObjectToObject(dataDB, dataMap);
+			dataDB.setNgaySua(getDateTimeNow());
+			dataDB.setNguoiSua(getUserName(request));
+
+			List<QlnvKquaDthauDtl> dtls = ObjectMapperUtils.mapAll(dtlReqList, QlnvKquaDthauDtl.class);
+			dataDB.setDetailList(dtls);
+			qlnvKquaDthauHdrRepository.save(dataDB);
+			
+			resp.setData(dataDB);
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
 		return ResponseEntity.ok(resp);
 	}
 	@ApiOperation(value = "Lấy chi tiết thông tin Kết quả đấu thầu", response = List.class)
-	@GetMapping(value = "/chi-tiet/{ids}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = PathContains.URL_CHI_TIET + "/{ids}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> detail(
 			@ApiParam(value = "ID Kết quả đấu thầu", example = "1", required = true) @PathVariable("ids") String ids) {
@@ -190,51 +190,50 @@ public class QlnvKquaDthauHdrController extends BaseController {
 			if (!qOptional.isPresent())
 				throw new UnsupportedOperationException("Không tồn tại bản ghi");
 			resp.setData(qOptional);
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 			log.error(e.getMessage());
 		}
 		return ResponseEntity.ok(resp);
 	}
 	@ApiOperation(value = "Trình duyệt-01/Duyệt-02/Từ chối-03/Xoá-04 Kết quả đấu thầu", response = List.class)
-	@PostMapping(value = "/status", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.URL_PHE_DUYET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Resp> updateStatus(@Valid HttpServletRequest request, @RequestBody StatusReq stReq) {
 		Resp resp = new Resp();
 		try {
 			if (StringUtils.isEmpty(stReq.getId()))
 				throw new Exception("Không tìm thấy dữ liệu");
 
-			Optional<QlnvKquaDthauHdr> qHoach = qlnvKquaDthauHdrRepository.findById(Long.valueOf(stReq.getId()));
-			if (!qHoach.isPresent())
+			Optional<QlnvKquaDthauHdr> optional = qlnvKquaDthauHdrRepository.findById(Long.valueOf(stReq.getId()));
+			if (!optional.isPresent())
 				throw new Exception("Không tìm thấy dữ liệu");
-			qHoach.get().setTrangThai(stReq.getTrangThai());
+			optional.get().setTrangThai(stReq.getTrangThai());
 			String status = stReq.getTrangThai();
-			Calendar cal = Calendar.getInstance();
-			Authentication authentication = TokenAuthenticationService.getAuthentication(request);
-			switch(status) {
-				case Contains.CHO_DUYET:
-					qHoach.get().setNguoiGuiDuyet(authentication.getName());
-					qHoach.get().setNgayGuiDuyet(cal.getTime());
-					break;
-				case Contains.DUYET:
-					qHoach.get().setNguoiPduyet(authentication.getName());
-					qHoach.get().setNgayPduyet(cal.getTime());
-					break;
-				case Contains.TU_CHOI:
-					qHoach.get().setLdoTuchoi(stReq.getLyDo());
-					break;
-				default:
-					break;
+			switch (status) {
+			case Contains.CHO_DUYET:
+				optional.get().setNguoiGuiDuyet(getUserName(request));
+				optional.get().setNgayGuiDuyet(getDateTimeNow());
+				break;
+			case Contains.DUYET:
+				optional.get().setNguoiPduyet(getUserName(request));
+				optional.get().setNgayPduyet(getDateTimeNow());
+				break;
+			case Contains.TU_CHOI:
+				optional.get().setLdoTuchoi(stReq.getLyDo());
+				break;
+			default:
+				break;
 			}
-			qlnvKquaDthauHdrRepository.save(qHoach.get());
-			resp.setStatusCode(Contains.RESP_SUCC);
-			resp.setMsg("Thành công");
+			
+			qlnvKquaDthauHdrRepository.save(optional.get());
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
 		} catch (Exception e) {
 			// TODO: handle exception
-			resp.setStatusCode(Contains.RESP_FAIL);
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
 			resp.setMsg(e.getMessage());
 		}
 		return ResponseEntity.ok(resp);

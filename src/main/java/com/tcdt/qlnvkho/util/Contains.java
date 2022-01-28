@@ -94,5 +94,10 @@ public class Contains {
 	public static final String DT_KHO_HT_HD_TRON_GOI = "01";
 	public static final String DT_KHO_HT_HD_THEO_DON_GIA = "02";
 	public static final String DT_KHO_HT_HD_THEO_DON_GIA_DIEU = "03";
+	
+	// Trang thai hoan thanh tien do thuc hien hop dong sua chua kho tang
+	public static final String TDTH_HD_HOAN_THANH = "00";
+	public static final String TDTH_HD_CHUA_HOAN_THANH = "01";
+	public static final String TDTH_HD_TAM_DUNG = "02";
 }
 

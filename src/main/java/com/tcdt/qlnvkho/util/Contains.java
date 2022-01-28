@@ -56,4 +56,22 @@ public class Contains {
 	public static final String KH_HANG_NAM = "00";
 	public static final String KH_THUONG_XUYEN = "01";
 
+	// Loai Du An Kho
+	public static final String DA_KHO_XAY_MOI = "00";
+	public static final String DA_KHO_CAI_TAO = "01";
+	
+	//Nhom Du An Kho
+	public static final String DA_KHO_NHOM_A = "00";
+	public static final String DA_KHO_NHOM_B = "01";
+	public static final String DA_KHO_NHOM_C = "02";
+	
+	//Hinh thuc Du An Kho
+	public static final String DA_KHO_HT_TAO_MOI = "00";
+	public static final String DA_KHO_HT_DIEU_CHINH = "01";
+	
+	//Nguon kinh phi Du An Kho
+	public static final String DA_KHO_NKP_NSNN = "00";
+	public static final String DA_KHO_NKP_ODA = "01";
+	public static final String DA_KHO_NKP_NTN = "02";
+	
 }

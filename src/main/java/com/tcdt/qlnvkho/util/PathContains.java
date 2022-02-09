@@ -28,4 +28,9 @@ public class PathContains {
 	public static final String QL_KHO_TANG = "/qly-kho-tang";
 	public static final String QL_QH_KHO_TANG = "/qly-qh-kho-tang";
 
+	// Hàng năm - thường xuyên được tổng cục duyệt
+	public static final String HN_TX_DTCD = "/hn-tx-dtcd";
+	
+	//7.8 Nhap khxd kho tang trung han dươc tong cuc duyet
+	public static final String QL_KHXD_TRUNG_HAN = "/qly-qd-xd-kho";
 }

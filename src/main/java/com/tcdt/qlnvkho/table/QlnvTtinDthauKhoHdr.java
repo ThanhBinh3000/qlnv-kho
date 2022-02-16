@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,62 +18,73 @@ import javax.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "QLNV_KQUA_DTHAU_HDR")
+@Table(name = "QLNV_TTIN_DTHAU_KHO_HDR")
 @Data
-public class QlnvKquaDthauHdr implements Serializable {
+public class QlnvTtinDthauKhoHdr implements Serializable{
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "QLNV_KQUA_DTHAU_HDR_SEQ")
-	@SequenceGenerator(sequenceName = "QLNV_KQUA_DTHAU_HDR_SEQ", allocationSize = 1, name = "QLNV_KQUA_DTHAU_HDR_SEQ")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "QLNV_TTIN_DTHAU_KHO_HDR_SEQ")
+	@SequenceGenerator(sequenceName = "QLNV_TTIN_DTHAU_KHO_HDR_SEQ", allocationSize = 1, name = "QLNV_TTIN_DTHAU_KHO_HDR_SEQ")
 	private Long id;
-	String soQdinhPduyet;
-	Date ngayKy;
-	Date ngayHluc;
+	
 	String soQdinh;
-	String soQdinhGoc;
-	String loaiQdinh;
-	String maDvi;
-	String trangThai;
+	Date ngayKy;
 	Date ngayTao;
 	String nguoiTao;
 	Date ngaySua;
 	String nguoiSua;
-	String ldoTuchoi;
 	Date ngayGuiDuyet;
 	String nguoiGuiDuyet;
+	String ldoTuchoi;
 	Date ngayPduyet;
 	String nguoiPduyet;
-	//@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+	String soQdinhGoc;
+	String maDuAn;
+	String tenGoiThau;
+	String trangThai;
+	String loaiQdinh;
+	String maDvi;
+	String moTa;
+	String tenBao;
+	Date ngayDangBao;
+	String tenPage;
+	Date ngayDangPage;
+	Date ngayPhanhTu;
+	Date ngayPhanhDen;
+	Date ngayMoTu;
+	Date ngayMoDen;
+	
 	@OneToMany(
 	        mappedBy = "header",
 	        		fetch = FetchType.LAZY, cascade = CascadeType.ALL,
 	        orphanRemoval = true
 	    )
-	private List<QlnvKquaDthauDtl> detailList = new ArrayList<QlnvKquaDthauDtl>();
+	private List<QlnvTtinDthauKhoDtl> detailList = new ArrayList<QlnvTtinDthauKhoDtl>();
 	
-	public void setDetailList(List<QlnvKquaDthauDtl> details) {
+	public void setDetailList(List<QlnvTtinDthauKhoDtl> details) {
         if (this.detailList == null) {
             this.detailList = details;
         } else if(this.detailList != details) { // not the same instance, in other case we can get ConcurrentModificationException from hibernate AbstractPersistentCollection
             this.detailList.clear();
-            for (QlnvKquaDthauDtl detail : details) {
+            for (QlnvTtinDthauKhoDtl detail : details) {
              	detail.setHeader(this);
      		}
      		this.detailList.addAll(details);
         }
     }
 	
-	public QlnvKquaDthauHdr addDetail(QlnvKquaDthauDtl dt) {
+	public QlnvTtinDthauKhoHdr addDetail(QlnvTtinDthauKhoDtl dt) {
 		detailList.add(dt);
         dt.setHeader(this);
         return this;
     }
  
-    public QlnvKquaDthauHdr removeDetail(QlnvKquaDthauDtl dt) {
+    public QlnvTtinDthauKhoHdr removeDetail(QlnvTtinDthauKhoDtl dt) {
     	detailList.remove(dt);
         dt.setHeader(null);
         return this;

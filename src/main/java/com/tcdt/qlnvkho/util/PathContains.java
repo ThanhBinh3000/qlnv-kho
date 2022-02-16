@@ -27,6 +27,13 @@ public class PathContains {
 	public static final String QL_DX_XD_KHO = "/qly-dx-xd-kho";
 	public static final String QL_KHO_TANG = "/qly-kho-tang";
 	public static final String QL_QH_KHO_TANG = "/qly-qh-kho-tang";
+	public static final String QL_DU_AN_KHO = "/qly-du-an-kho";
+	public static final String QL_TTIN_DTHAU_KHO = "/ql-ttin-dthau-kho";
+	public static final String QL_KQUA_DTHAU = "/ql-kqua-dthau";
+	public static final String QL_TT_HDONG_KHO = "/ql-tt-hdong-kho";
+	public static final String QL_TDTH_SUA_CHUA_KHO = "/ql-tdth-sua-chua-kho";
+	// Hàng năm - thường xuyên được tổng cục duyệt
+	public static final String HN_TX_DTCD = "/hn-tx-dtcd";
 
 	// Hàng năm - thường xuyên được tổng cục duyệt
 	public static final String HN_TX_DTCD = "/hn-tx-dtcd";

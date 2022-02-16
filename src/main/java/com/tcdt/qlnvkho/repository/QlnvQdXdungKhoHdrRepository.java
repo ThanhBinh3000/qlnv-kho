@@ -15,5 +15,4 @@ public interface QlnvQdXdungKhoHdrRepository extends BaseRepository<QlnvQdXdungK
 	@Query(value = qr, countQuery = qrCount, nativeQuery = true)
 	Page<QlnvQdXdungKhoHdr> selectParams(@Param("soQdinh") String soQdinh, Pageable pageable);
 
-	// Iterable<QlnvQdXdungKhoHdr> findByStatus(String ttNhomHoatdong);
 }

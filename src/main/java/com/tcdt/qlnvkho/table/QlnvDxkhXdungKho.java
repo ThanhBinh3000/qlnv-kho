@@ -22,60 +22,55 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Where;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 
 @Entity
-@Table(name = "QLNV_QHOACH_KHO_HDR")
+@Table(name = QlnvDxkhXdungKho.TABLE_NAME)
 @Data
-@NamedEntityGraph(name = "QLNV_QHOACH_KHO_HDR.detailList",attributeNodes = @NamedAttributeNode("detailList"))
-public class QlnvQhoachKhoHdr implements Serializable {
+@NamedEntityGraph(name = "QLNV_DXKH_XDUNG_KHO.children", attributeNodes = @NamedAttributeNode("children"))
+public class QlnvDxkhXdungKho implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public static final String TABLE_NAME = "QLNV_DXKH_XDUNG_KHO";
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "QLNV_QHOACH_KHO_HDR_SEQ")
-	@SequenceGenerator(sequenceName = "QLNV_QHOACH_KHO_HDR_SEQ", allocationSize = 1, name = "QLNV_QHOACH_KHO_HDR_SEQ")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "QLNV_DXKH_XDUNG_KHO_SEQ")
+	@SequenceGenerator(sequenceName = "QLNV_DXKH_XDUNG_KHO_SEQ", allocationSize = 1, name = "QLNV_DXKH_XDUNG_KHO_SEQ")
 	private Long id;
-	String soQdinh;
-	Integer qhTuNam;
-	Integer qhDenNam;
+
+	String maDvi;
+	String loaiDxuat;
 	@Temporal(TemporalType.DATE)
-	Date ngayQd;
-	String loaiQd;
-	String soQdinhGoc;
-	String moTa;
-	String trangThai;
+	Date ngayDxuat;
 	Date ngayTao;
 	String nguoiTao;
 	Date ngaySua;
 	String nguoiSua;
-	String ldoTuchoi;
-	Date ngayGuiDuyet;
-	String nguoiGuiDuyet;
-	Date ngayPduyet;
-	String nguoiPduyet;
+	String trangThai;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@Fetch(value = FetchMode.SUBSELECT)
-	@JoinColumn(name = "id_qh_hdr")
+	@JoinColumn(name = "dataId")
 	@JsonManagedReference
-	private List<QlnvQhoachKhoDtl> detailList = new ArrayList<>();
+	@Where(clause = "data_type='" + QlnvDxkhXdungKho.TABLE_NAME + "'")
+	private List<FileDKemJoinDxkhXdungKho> children = new ArrayList<>();
 
-	public void setDetailList(List<QlnvQhoachKhoDtl> detailList) {
-		this.detailList.clear();
-		for (QlnvQhoachKhoDtl detail : detailList) {
-			detail.setHeader(this);
+	public void setChildren(List<FileDKemJoinDxkhXdungKho> children) {
+		this.children.clear();
+		for (FileDKemJoinDxkhXdungKho child : children) {
+			child.setParent(this);
 		}
-		this.detailList.addAll(detailList);
+		this.children.addAll(children);
 	}
 
-	public void addChild(QlnvQhoachKhoDtl detail) {
-		detail.setHeader(this);
-		this.detailList.add(detail);
+	public void addChild(FileDKemJoinDxkhXdungKho child) {
+		child.setParent(this);
+		this.children.add(child);
 	}
 }

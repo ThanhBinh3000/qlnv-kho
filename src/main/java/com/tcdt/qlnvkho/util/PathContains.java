@@ -35,4 +35,9 @@ public class PathContains {
 	// Hàng năm - thường xuyên được tổng cục duyệt
 	public static final String HN_TX_DTCD = "/hn-tx-dtcd";
 
+	// Hàng năm - thường xuyên được tổng cục duyệt
+	public static final String HN_TX_DTCD = "/hn-tx-dtcd";
+	
+	//7.8 Nhap khxd kho tang trung han dươc tong cuc duyet
+	public static final String QL_KHXD_TRUNG_HAN = "/qly-qd-xd-kho";
 }

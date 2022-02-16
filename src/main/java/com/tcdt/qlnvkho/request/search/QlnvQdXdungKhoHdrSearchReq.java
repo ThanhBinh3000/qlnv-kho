@@ -9,10 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class QlnvQdXdungKhoHdrSearchReq extends BaseRequest {
-	
 	@ApiModelProperty(example = "QD1234")
 	String soQdinh;
-	
+
 	@ApiModelProperty(example = "00")
 	String loaiKhoach;
 }

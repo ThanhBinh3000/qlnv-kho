@@ -32,12 +32,10 @@ public class PathContains {
 	public static final String QL_KQUA_DTHAU = "/ql-kqua-dthau";
 	public static final String QL_TT_HDONG_KHO = "/ql-tt-hdong-kho";
 	public static final String QL_TDTH_SUA_CHUA_KHO = "/ql-tdth-sua-chua-kho";
+	
 	// Hàng năm - thường xuyên được tổng cục duyệt
 	public static final String HN_TX_DTCD = "/hn-tx-dtcd";
 
-	// Hàng năm - thường xuyên được tổng cục duyệt
-	public static final String HN_TX_DTCD = "/hn-tx-dtcd";
-	
-	//7.8 Nhap khxd kho tang trung han dươc tong cuc duyet
+	// 7.8 Nhap khxd kho tang trung han dươc tong cuc duyet
 	public static final String QL_KHXD_TRUNG_HAN = "/qly-qd-xd-kho";
 }

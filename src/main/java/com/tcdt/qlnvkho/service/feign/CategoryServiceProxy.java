@@ -17,4 +17,10 @@ public interface CategoryServiceProxy {
 			@RequestHeader(value = "Authorization", required = true) String authorizationHeader,
 			@PathVariable("ids") String ids);
 
+	@GetMapping("/dm-hang/danh-sach/ma-cha")
+	@Headers({ "Accept: application/json; charset=utf-8", "Content-Type: application/x-www-form-urlencoded" })
+	public ResponseEntity<String> recursive(
+			@RequestHeader(value = "Authorization", required = true) String authorizationHeader,
+			@PathVariable("maCha") String maCha);
+
 }

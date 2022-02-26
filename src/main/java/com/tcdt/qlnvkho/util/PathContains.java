@@ -38,4 +38,7 @@ public class PathContains {
 
 	// 7.8 Nhap khxd kho tang trung han dươc tong cuc duyet
 	public static final String QL_KHXD_TRUNG_HAN = "/qly-qd-xd-kho";
+	
+	//Tinh trang kho hien thoi
+	public static final String KT_TINHTRANG_HIENTHOI = "/kt-tinhtrang-hienthoi";
 }

@@ -1,62 +1,70 @@
 package com.tcdt.qlnvkho.table.khotang;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Entity
 @Table(name = "KT_NGAN_KHO")
 @Data
-public class KtNganKho {
+public class KtNganKho implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "KT_NGAN_KHO_SEQ")
   @SequenceGenerator(sequenceName = "KT_NGAN_KHO_SEQ", allocationSize = 1, name = "KT_NGAN_KHO_SEQ")
-  private Long id;
-  private String maNgankho;
-  private String tenNgankho;
-  private Date namSudung;
-  private String nhiemVu;
-  private String loaikhoId;
-  private String chatluongId;
-  private String tinhtrangId;
-  private String ngankhoHientrangId;
-  private BigDecimal dienTichDat;
-  private BigDecimal tichLuongTk;
-  private BigDecimal tichLuongChua;
-  private Long nhakhoId;
-  private Long quyhoachDuyetId;
-  private BigDecimal tichLuongChuaLt;
-  private BigDecimal tichLuongChuaVt;
-  private BigDecimal theTichChuaLt;
-  private BigDecimal tichLuongKhaDung;
-  private BigDecimal tichLuongKdLt;
-  private BigDecimal tichLuongKdVt;
-  private String huongSuDung;
-  private BigDecimal tichLuongKdLtvt;
-  private Integer trangThaiTl;
-  private Integer namNhap;
-  private BigDecimal tichLuongChuaLtGao;
-  private BigDecimal tichLuongChuaLtThoc;
-  private BigDecimal theTichChuaVt;
-  private BigDecimal theTichTk;
-  private Long updateStatus;
-  private Date lastUpdate;
-  private String trangThai;
-  private Date ngayTao;
-  private String nguoiTao;
-  private Date ngaySua;
-  private String nguoiSua;
-  private String ldoTuchoi;
-  private Date ngayGuiDuyet;
-  private String nguoiGuiDuyet;
-  private Date ngayPduyet;
-  private String nguoiPduyet;
+  Long id;
+  String maNgankho;
+  String tenNgankho;
+  @Temporal(TemporalType.DATE)
+  Date namSudung;
+  String nhiemVu;
+  String loaikhoId;
+  String chatluongId;
+  String tinhtrangId;
+  String ngankhoHientrangId;
+  BigDecimal dienTichDat;
+  BigDecimal tichLuongTk;
+  BigDecimal tichLuongChua;
+//  Long nhakhoId;
+  Long quyhoachDuyetId;
+  BigDecimal tichLuongChuaLt;
+  BigDecimal tichLuongChuaVt;
+  BigDecimal theTichChuaLt;
+  BigDecimal tichLuongKhaDung;
+  BigDecimal tichLuongKdLt;
+  BigDecimal tichLuongKdVt;
+  String huongSuDung;
+  BigDecimal tichLuongKdLtvt;
+  Integer trangThaiTl;
+  Integer namNhap;
+  BigDecimal tichLuongChuaLtGao;
+  BigDecimal tichLuongChuaLtThoc;
+  BigDecimal theTichChuaVt;
+  BigDecimal theTichTk;
+  Long updateStatus;
+  Date lastUpdate;
+  String trangThai;
+  Date ngayTao;
+  String nguoiTao;
+  Date ngaySua;
+  String nguoiSua;
+  String ldoTuchoi;
+  Date ngayGuiDuyet;
+  String nguoiGuiDuyet;
+  Date ngayPduyet;
+  String nguoiPduyet;
+
+  @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY,
+          cascade = CascadeType.ALL)
+  List<KtNganLo> child;
+
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "NHAKHO_ID", referencedColumnName = "ID",updatable = false, insertable = false)
+  @JsonIgnore
+  KtNhaKho parent;
 }

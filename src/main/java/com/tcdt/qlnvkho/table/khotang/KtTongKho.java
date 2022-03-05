@@ -1,21 +1,20 @@
 package com.tcdt.qlnvkho.table.khotang;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tcdt.qlnvkho.table.catalog.QlnvDmDbhc;
 import lombok.Data;
 
 @Entity
 @Table(name = "KT_TONG_KHO")
 @Data
-public class KtTongKho {
+public class KtTongKho implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "KT_TONG_KHO_SEQ")
   @SequenceGenerator(sequenceName = "KT_TONG_KHO_SEQ", allocationSize = 1, name = "KT_TONG_KHO_SEQ")
@@ -35,8 +34,9 @@ public class KtTongKho {
   BigDecimal giatriConlai;
   String khoCuId;
   Long capKho;
+  @Temporal(TemporalType.DATE)
   Date ngayChuyen;
-  Long dtqgkvId;
+//  Long dtqgkvId;
   Long quyhoachDuyetId;
   String tongkhoHientrangId;
   BigDecimal tichLuongThietKe;
@@ -60,4 +60,13 @@ public class KtTongKho {
   String nguoiGuiDuyet;
   Date ngayPduyet;
   String nguoiPduyet;
+
+  @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY,
+          cascade = CascadeType.ALL)
+  private List<KtDiemKho> child;
+
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "DTQGKV_ID", referencedColumnName = "ID", updatable = false, insertable = false)
+  @JsonIgnore
+  private KtDtqgkv parent;
 }

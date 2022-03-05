@@ -1,27 +1,26 @@
 package com.tcdt.qlnvkho.table.khotang;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Entity
 @Table(name = "KT_NGAN_LO")
 @Data
-public class KtNganLo {
+public class KtNganLo implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "KT_NGAN_LO_SEQ")
   @SequenceGenerator(sequenceName = "KT_NGAN_LO_SEQ", allocationSize = 1, name = "KT_NGAN_LO_SEQ")
   Long id;
   String maNganlo;
   String tenNganlo;
+  @Temporal(TemporalType.DATE)
   Date namSudung;
   String nhiemVu;
   String loaikhoId;
@@ -31,7 +30,7 @@ public class KtNganLo {
   BigDecimal dienTichDat;
   BigDecimal tichLuongTk;
   BigDecimal tichLuongChua;
-  Long ngankhoId;
+//  Long ngankhoId;
   Long quyhoachDuyetId;
   BigDecimal tichLuongChuaLt;
   BigDecimal tichLuongChuaVt;
@@ -59,4 +58,9 @@ public class KtNganLo {
   String nguoiGuiDuyet;
   Date ngayPduyet;
   String nguoiPduyet;
+
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "NGANKHO_ID", referencedColumnName = "ID",updatable = false, insertable = false)
+  @JsonIgnore
+  private KtNganKho parent;
 }

@@ -41,4 +41,13 @@ public class PathContains {
 	
 	//Tinh trang kho hien thoi
 	public static final String KT_TINHTRANG_HIENTHOI = "/kt-tinhtrang-hienthoi";
+
+	//Mạng lưới kho
+	public static final String KT_MANG_LUOI_KHO = "/mlk";
+	public static final String KT_CUC = "/cuc";
+	public static final String KT_CHI_CUC = "/chi-cuc";
+	public static final String KT_DIEM_KHO = "/diem-kho";
+	public static final String KT_NHA_KHO = "/nha-kho";
+	public static final String KT_NGAN_KHO = "/ngan-kho";
+	public static final String KT_NGAN_LO = "/ngan-lo";
 }

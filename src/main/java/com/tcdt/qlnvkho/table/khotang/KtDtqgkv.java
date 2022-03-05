@@ -1,21 +1,18 @@
 package com.tcdt.qlnvkho.table.khotang;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Data;
 
 @Entity
 @Table(name = "KT_DTQGKV")
 @Data
-public class KtDtqgkv {
+public class KtDtqgkv implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "KT_DTQGKV_SEQ")
   @SequenceGenerator(sequenceName = "KT_DTQGKV_SEQ", allocationSize = 1, name = "KT_DTQGKV_SEQ")
@@ -52,4 +49,8 @@ public class KtDtqgkv {
   Date ngayPduyet;
   String nguoiPduyet;
   Date ngayDongboSauCung;
+
+  @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY,
+          cascade = CascadeType.ALL)
+  private List<KtTongKho> child;
 }

@@ -176,7 +176,7 @@ public class MangLuoiKhoController extends BaseController {
 		return ResponseEntity.ok(resp);
 	}
 	@ApiOperation(value = "Xoá thông tin thông tin đơn vị dữ trữ quốc gia khu vực (Cục)", response = List.class, produces = MediaType.APPLICATION_JSON_VALUE)
-	@PostMapping(value = PathContains.URL_XOA, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = PathContains.KT_CUC + PathContains.URL_XOA, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Resp> deleteCuc(@RequestBody IdSearchReq idSearchReq) {
 		Resp resp = new Resp();
@@ -330,6 +330,12 @@ public class MangLuoiKhoController extends BaseController {
 		}
 		return ResponseEntity.ok(resp);
 	}
+
+	/**
+	 *
+	 * @param idSearchReq
+	 * @return
+	 */
 	@ApiOperation(value = "Xoá thông tin thông tin đơn vị dữ trữ quốc gia khu vực (Chi Cục)", response = List.class, produces = MediaType.APPLICATION_JSON_VALUE)
 	@PostMapping(value = PathContains.KT_CHI_CUC + PathContains.URL_XOA, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)

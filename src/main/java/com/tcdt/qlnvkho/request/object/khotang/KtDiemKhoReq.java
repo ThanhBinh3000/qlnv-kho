@@ -40,7 +40,7 @@ public class KtDiemKhoReq {
 	BigDecimal giatriConlai;
 	Long khoCuId;
 	BigDecimal capKho;
-	//  Long tongkhoId;
+	Long tongkhoId;
 	Long quyhoachDuyetId;
 	//@Lob
 	//Blob soDoMatBang;

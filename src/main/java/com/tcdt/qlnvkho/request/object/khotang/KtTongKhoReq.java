@@ -33,7 +33,7 @@ public class KtTongKhoReq {
 	BigDecimal giatriConlai;
 	String khoCuId;
 	Long capKho;
-	//  Long dtqgkvId;
+	Long dtqgkvId;
 	Long quyhoachDuyetId;
 	String tongkhoHientrangId;
 	BigDecimal tichLuongThietKe;

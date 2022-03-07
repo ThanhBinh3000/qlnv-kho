@@ -243,13 +243,13 @@ public class MangLuoiKhoController extends BaseController {
 		Resp resp = new Resp();
 		try {
 			// Add thong tin
-			KtDtqgkv dataMap = ObjectMapperUtils.map(objReq, KtDtqgkv.class);
+			KtTongKho dataMap = ObjectMapperUtils.map(objReq, KtTongKho.class);
 
 			dataMap.setTrangThai(Contains.TAO_MOI);
 			dataMap.setNguoiTao(getUserName(req));
 			dataMap.setNgayTao(getDateTimeNow());
 
-			KtDtqgkv createCheck = mangLuoiKhoService.saveKtDtqgkv(dataMap);
+			KtTongKho createCheck = mangLuoiKhoService.saveKtTongKho(dataMap);
 
 			resp.setData(createCheck);
 			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());

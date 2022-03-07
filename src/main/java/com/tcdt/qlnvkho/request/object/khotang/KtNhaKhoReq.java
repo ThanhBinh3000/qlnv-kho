@@ -31,7 +31,7 @@ public class KtNhaKhoReq {
 	String nhakhoHientrangId;
 	BigDecimal dienTichDat;
 	BigDecimal tichLuongTk;
-	//  Long diemkhoId;
+	Long diemkhoId;
 	Long quyhoachDuyetId;
 	//@Lob
 	//Blob banVeKt;

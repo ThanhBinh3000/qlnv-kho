@@ -30,7 +30,7 @@ public class KtNganKhoReq {
 	BigDecimal dienTichDat;
 	BigDecimal tichLuongTk;
 	BigDecimal tichLuongChua;
-	//  Long nhakhoId;
+	Long nhakhoId;
 	Long quyhoachDuyetId;
 	BigDecimal tichLuongChuaLt;
 	BigDecimal tichLuongChuaVt;

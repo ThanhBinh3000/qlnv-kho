@@ -15,4 +15,5 @@ public class KtTrangthaiHienthoiEntity {
 	String nam;
 	String maDonVi;
 	BigDecimal slHienThoi;
+	String maVthh;
 }

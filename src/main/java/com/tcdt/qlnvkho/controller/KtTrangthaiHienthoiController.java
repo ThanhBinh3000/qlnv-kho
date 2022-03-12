@@ -42,7 +42,7 @@ public class KtTrangthaiHienthoiController extends BaseController {
 		try {
 
 			Iterable<KtTrangthaiHienthoiEntity> data = ktTrangthaiHienthoiRepository.selectParams(objReq.getMaDvi(),
-					objReq.getMaVthh());
+					objReq.getMaVthhList());
 			resp.setData(data);
 			resp.setStatusCode(Contains.RESP_SUCC);
 			resp.setMsg("Thành công");

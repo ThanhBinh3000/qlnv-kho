@@ -11,9 +11,9 @@ import lombok.Data;
 @Data
 public class KtTrangthaiHienthoiEntity {
 
-	@Id
 	String nam;
 	String maDonVi;
 	BigDecimal slHienThoi;
+	@Id
 	String maVthh;
 }

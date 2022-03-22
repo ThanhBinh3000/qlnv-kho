@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.tcdt.qlnvkho.request.BaseRequest;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -82,8 +83,10 @@ public class BaseController {
 
 	public QlnvDmDonvi getDvi(HttpServletRequest request) throws Exception {
 		// Call feign get dvql
-		ResponseEntity<String> response = categoryServiceProxy.getDetail(this.getAuthorizationToken(request),
-				this.getDvql(request));
+		BaseRequest baseRequest = new BaseRequest();
+		baseRequest.setStr(getDvql(request));
+		ResponseEntity<String> response = categoryServiceProxy.getDetailByCode(this.getAuthorizationToken(request),
+				baseRequest);
 
 		if (Request.getStatus(response.getBody()) != EnumResponse.RESP_SUCC.getValue())
 			throw new Exception("Không tìm truy vấn được thông tin đơn vị");

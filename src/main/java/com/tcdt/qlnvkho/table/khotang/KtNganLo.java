@@ -60,7 +60,7 @@ public class KtNganLo implements Serializable {
   String nguoiPduyet;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "NGANKHO_ID", referencedColumnName = "ID",updatable = false, insertable = false)
+  @JoinColumn(name = "NGANKHO_ID",updatable = false, insertable = false)
   @JsonIgnore
   private KtNganKho parent;
 }

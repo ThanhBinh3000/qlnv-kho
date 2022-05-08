@@ -15,7 +15,7 @@ import com.tcdt.qlnvkho.util.Contains;
 import lombok.Data;
 
 @Entity
-@Table(name = "QLNV_DM_TAISAN")
+@Table(name = "DM_TAISAN")
 @Data
 public class QlnvDmTaisan {
 	@Id

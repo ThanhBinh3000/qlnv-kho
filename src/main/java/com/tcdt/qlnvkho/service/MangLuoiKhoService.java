@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -51,8 +52,19 @@ public class MangLuoiKhoService{
 		return ktTongKhoRepository.selectParams(ma,ten,id,pageable);
 	}
 
-	public Optional<KtTongKho> findKtTongKhobyId(Long id){
-		return ktTongKhoRepository.findById(id);
+	public Optional<KtTongKho> findKtTongKhobyId(String id){
+		if (StringUtils.isEmpty(id)){
+			throw new UnsupportedOperationException("Không tồn tại bản ghi");
+		}
+		Optional<KtTongKho> qOptional = ktTongKhoRepository.findById(Long.parseLong(id));
+		if (!qOptional.isPresent()){
+			Optional<KtTongKho> qOptionalMa = ktTongKhoRepository.findByMaTongKho(id);
+			if (!qOptionalMa.isPresent()){
+				throw new UnsupportedOperationException("Không tồn tại bản ghi");
+			}
+			return qOptionalMa;
+		}
+		return qOptional;
 	}
 
 	public KtTongKho saveKtTongKho(KtTongKho ktTongKho){

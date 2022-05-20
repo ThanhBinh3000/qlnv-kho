@@ -278,7 +278,7 @@ public class MangLuoiKhoController extends BaseController {
 				throw new Exception("Sửa thất bại, không tìm thấy dữ liệu");
 
 			Optional<KtTongKho> qOptional = mangLuoiKhoService
-					.findKtTongKhobyId(Long.valueOf(objReq.getId()));
+					.findKtTongKhobyId(objReq.getId().toString());
 			if (!qOptional.isPresent())
 				throw new Exception("Không tìm thấy dữ liệu cần sửa");
 
@@ -315,11 +315,7 @@ public class MangLuoiKhoController extends BaseController {
 			@ApiParam(value = "ID bản ghi", example = "54", required = true) @PathVariable("ids") String ids) {
 		Resp resp = new Resp();
 		try {
-			if (StringUtils.isEmpty(ids))
-				throw new UnsupportedOperationException("Không tồn tại bản ghi");
-			Optional<KtTongKho> qOptional = mangLuoiKhoService.findKtTongKhobyId(Long.parseLong(ids));
-			if (!qOptional.isPresent())
-				throw new UnsupportedOperationException("Không tồn tại bản ghi");
+			Optional<KtTongKho> qOptional = mangLuoiKhoService.findKtTongKhobyId(ids);
 			resp.setData(qOptional);
 			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
 			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
@@ -345,7 +341,7 @@ public class MangLuoiKhoController extends BaseController {
 			if (StringUtils.isEmpty(idSearchReq.getId()))
 				throw new Exception("Xoá thất bại, không tìm thấy dữ liệu");
 			Long id = idSearchReq.getId();
-			Optional<KtTongKho> ktTongKho = mangLuoiKhoService.findKtTongKhobyId(id);
+			Optional<KtTongKho> ktTongKho = mangLuoiKhoService.findKtTongKhobyId(id.toString());
 			if (!ktTongKho.isPresent())
 				throw new Exception("Không tìm thấy dữ liệu cần xoá");
 			mangLuoiKhoService.delKtTongKhobyId(id);

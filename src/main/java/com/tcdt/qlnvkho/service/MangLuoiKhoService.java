@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -97,6 +98,11 @@ public class MangLuoiKhoService{
 	public void delKtDiemKhobyId(Long id){
 		ktDiemKhoRepository.deleteById(id);
 	}
+
+	public Iterable<KtDiemKho> findAllDiemKho(){
+		Iterable<KtDiemKho> ktDiemKho = ktDiemKhoRepository.findAll();
+		return ktDiemKho;
+	};
 	/**
 	 * Nhà kho
 	 * @param ma

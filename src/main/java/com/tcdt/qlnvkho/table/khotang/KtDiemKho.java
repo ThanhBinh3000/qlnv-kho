@@ -74,6 +74,7 @@ public class KtDiemKho implements Serializable {
 
   @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY,
           cascade = CascadeType.ALL)
+  @JsonIgnore
   private List<KtNhaKho> child;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

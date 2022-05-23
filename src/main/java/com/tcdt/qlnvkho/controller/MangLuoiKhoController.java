@@ -362,6 +362,23 @@ public class MangLuoiKhoController extends BaseController {
 	 * Diem kho ======================================================================================
 	 */
 
+	@ApiOperation(value = "Lấy tat ca thông tin đơn vị dữ trữ quốc gia khu vực (Diem kho)", response = List.class)
+	@GetMapping(value = PathContains.KT_DIEM_KHO + PathContains.URL_TAT_CA, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<Resp> getTatCaDiemKho() {
+		Resp resp = new Resp();
+		try {
+			resp.setData(mangLuoiKhoService.findAllDiemKho());
+			resp.setStatusCode(EnumResponse.RESP_SUCC.getValue());
+			resp.setMsg(EnumResponse.RESP_SUCC.getDescription());
+		} catch (Exception e) {
+			resp.setStatusCode(EnumResponse.RESP_FAIL.getValue());
+			resp.setMsg(e.getMessage());
+			log.error(e.getMessage());
+		}
+		return ResponseEntity.ok(resp);
+	}
+
 	@ApiOperation(value = "Tìm kiếm danh sách Diem kho", response = List.class)
 	@PostMapping(value = PathContains.KT_DIEM_KHO + PathContains.URL_TRA_CUU, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
